@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Logs - LionMode Elite Dashboard</title>
+    <link rel="stylesheet" href="style.css?v=5">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+            <div class="dashboard-sidebar__brand">
+                <img class="dashboard-sidebar__logo" src="home__lionmode-logo.webp" alt="LionMode Elite logo">
+                <div class="dashboard-sidebar__roadmap">ROAD TO <span>Romania 2026</span></div>
+            </div>
+            <ul id="dashboard-sidebar-nav" class="dashboard-sidebar__nav"></ul>
+            <div class="dashboard-sidebar__quote">
+                “Discipline today<br>excellence tomorrow<br>champion forever”
+            </div>
+        </aside>
+        <main class="dashboard-main">
+            <section class="dashboard-hero">
+                <div class="dashboard-athlete-card">
+                    <div class="dashboard-athlete-card__photo-wrap">
+                        <div class="dashboard-page-hero-icon"><i class="fa-regular fa-circle-play"></i></div>
+                    </div>
+                    <div class="dashboard-athlete-card__summary">
+                        <div class="dashboard-athlete-card__title">
+                            <h1>Video Logs</h1>
+                            <p>Track training footage, playback feedback, and coach review comments for every session.</p>
+                        </div>
+                        <div class="dashboard-athlete-card__meta" id="video-meta">
+                            <div class="meta-row"><span>Uploaded</span><strong>4 logs</strong></div>
+                            <div class="meta-row"><span>Last Review</span><strong>12 May 2025</strong></div>
+                            <div class="meta-row"><span>Next Review</span><strong>15 May 2025</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="dashboard-grid dashboard-grid--upper">
+                <article class="dashboard-panel dashboard-panel--strengths">
+                    <div class="dashboard-panel__title dashboard-panel__title--green"><h2>Log Highlights</h2></div>
+                    <ul id="video-log-list" class="dashboard-list dashboard-list--good"></ul>
+                </article>
+                <article class="dashboard-panel dashboard-panel--weaknesses">
+                    <div class="dashboard-panel__title dashboard-panel__title--red"><h2>Correction Notes</h2></div>
+                    <ul class="dashboard-list dashboard-list--warn">
+                        <li>Refine blocking stance on left side</li>
+                        <li>Increase speed in transition steps</li>
+                        <li>Keep chin tucked in sparring footage</li>
+                    </ul>
+                </article>
+                <article class="dashboard-panel dashboard-panel--activity">
+                    <div class="dashboard-panel__title"><h2>Review Plan</h2></div>
+                    <p>Use video playback to identify technical details, confirm execution, and adjust training focus.</p>
+                </article>
+            </section>
+            <section class="dashboard-grid dashboard-grid--lower">
+                <article class="dashboard-panel dashboard-panel--goals">
+                    <div class="dashboard-panel__title dashboard-panel__title--gold"><h2>Video Goals</h2></div>
+                    <ul class="dashboard-number-list">
+                        <li>Record a clean kata run</li>
+                        <li>Capture a fast, controlled sparring drill</li>
+                        <li>Review coach corrections weekly</li>
+                    </ul>
+                </article>
+                <article class="dashboard-panel dashboard-panel--note">
+                    <div class="dashboard-panel__title dashboard-panel__title--gold"><h2>Playback Tips</h2></div>
+                    <p>Watch the first three seconds carefully to identify posture and balance before moving into full sequence review.</p>
+                </article>
+                <article class="dashboard-panel dashboard-panel--events">
+                    <div class="dashboard-panel__title"><h2>Upcoming Submissions</h2></div>
+                    <ul class="dashboard-event-list">
+                        <li>Technique replay due Friday</li>
+                        <li>Competition prep footage due Monday</li>
+                        <li>Review session after upload</li>
+                    </ul>
+                </article>
+            </section>
+        </main>
+    </div>
+    <script src="dashboard-sidebar.js"></script>
+    <script>
+        (function () {
+            function parseJson(value, fallback) {
+                if (!value) return fallback;
+                try {
+                    return JSON.parse(value);
+                } catch (error) {
+                    return fallback;
+                }
+            }
+
+            function getStoredItem(key) {
+                try {
+                    const value = window.localStorage.getItem(key);
+                    if (value !== null) return value;
+                } catch (error) {}
+
+                try {
+                    const state = JSON.parse(window.name || '{}');
+                    if (state && state.marker === '__lionModeEliteSharedState' && state.data && Object.prototype.hasOwnProperty.call(state.data, key)) {
+                        return state.data[key];
+                    }
+                } catch (error) {}
+
+                return null;
+            }
+
+            function getCurrentUser() {
+                const raw = getStoredItem('currentUser');
+                const parsed = parseJson(raw, null);
+                if (parsed && typeof parsed === 'object') {
+                    return parsed;
+                }
+                if (typeof raw === 'string' && raw.trim().length) {
+                    return { name: raw.trim(), role: 'athlete', childName: raw.trim() };
+                }
+                return null;
+            }
+
+            function getDashboards() {
+                const dashboards = parseJson(getStoredItem('dashboards'), null);
+                return dashboards && typeof dashboards === 'object' && !Array.isArray(dashboards) ? dashboards : {};
+            }
+
+            function normalizeKey(value) {
+                return typeof value === 'string' ? value.trim().toLowerCase() : '';
+            }
+
+            function findProfile(user) {
+                if (!user) return null;
+                const dashboards = getDashboards();
+                const keys = [user.childName, user.name, user.parentName].map(normalizeKey).filter(Boolean);
+                for (const key of keys) {
+                    if (dashboards[key]) {
+                        return dashboards[key];
+                    }
+                }
+
+                return Object.values(dashboards).find(profile => {
+                    const profileName = normalizeKey(profile.name);
+                    const childUsername = normalizeKey(profile.childUsername);
+                    const parentName = normalizeKey(profile.parentName);
+                    return keys.some(key => key && (profileName === key || childUsername === key || parentName === key));
+                }) || null;
+            }
+
+            function renderVideoLogs(profile) {
+                const listEl = document.getElementById('video-log-list');
+                const metaEl = document.getElementById('video-meta');
+                if (!listEl || !metaEl) return;
+
+                const logs = Array.isArray(profile.videoLogs) ? profile.videoLogs : [];
+                const hasLogs = logs.length > 0;
+                metaEl.innerHTML = `
+                    <div class="meta-row"><span>Uploaded</span><strong>${logs.length} logs</strong></div>
+                    <div class="meta-row"><span>Last Review</span><strong>${hasLogs ? 'Today' : 'N/A'}</strong></div>
+                    <div class="meta-row"><span>Next Review</span><strong>${hasLogs ? 'In 3 days' : 'TBD'}</strong></div>
+                `;
+
+                if (!hasLogs) {
+                    listEl.innerHTML = '<li>No video logs yet. Upload videos in Admin Panel to populate this page.</li>';
+                    return;
+                }
+
+                listEl.innerHTML = logs.map(log => {
+                    const title = (log.title || '').trim() || 'Untitled Log';
+                    const url = (log.url || '').trim();
+                    if (!url) {
+                        return `<li>${title}</li>`;
+                    }
+                    const target = url.startsWith('http') ? '_blank' : '_self';
+                    return `<li><a href="${url}" target="${target}" rel="noopener noreferrer">${title}</a></li>`;
+                }).join('');
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const currentUser = getCurrentUser();
+                const profile = findProfile(currentUser) || {};
+                renderVideoLogs(profile);
+            });
+        })();
+    </script>
+</body>
+</html>

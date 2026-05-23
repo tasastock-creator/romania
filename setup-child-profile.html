@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Child Profile Setup – LionMode Elite</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; }
+        .content { padding: 40px; }
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .section p, .section li {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .section ul { margin-left: 20px; }
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .success { border-left-color: #28a745; background: #d4edda; }
+        .success h2 { color: #155724; }
+        .warning { border-left-color: #ffc107; background: #fff3cd; }
+        .warning h2 { color: #856404; }
+        .info { border-left-color: #17a2b8; background: #d1ecf1; }
+        .info h2 { color: #0c5460; }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        table tr:hover {
+            background: #f5f5f5;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦁 Child Profile Setup</h1>
+            <p>Create and manage child athlete login credentials</p>
+        </div>
+
+        <div class="content">
+            <div class="section success">
+                <h2>✅ Quick Start: Test Child Login</h2>
+                <p><strong>Username:</strong> <code>athlete</code></p>
+                <p><strong>Password:</strong> <code>password123</code></p>
+                <p style="margin-top: 15px; color: green;">A test account has been automatically created. Use the credentials above to test child login on the <a href="login.html" style="color: #28a745; text-decoration: underline;">login page</a>.</p>
+            </div>
+
+            <div class="section info">
+                <h2>ℹ️ How Child Login Works</h2>
+                <p>Child login requires ONE of these to exist:</p>
+                <ol style="margin-left: 20px;">
+                    <li><strong>Direct User Entry:</strong> A user with role 'athlete' containing the child's login credentials</li>
+                    <li><strong>Profile-Based:</strong> A saved dashboard profile with <code>childUsername</code> and <code>childPassword</code> fields</li>
+                </ol>
+                <p style="margin-top: 15px;">The system checks in this order:</p>
+                <div class="code-block">
+1. Exact match in users array
+2. Profile lookup by child credentials
+3. Default admin user (Admin/LionMode2026!)
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>➕ Create New Child Profile</h2>
+                <p>Fill in the details below and create a new child account:</p>
+                
+                <div class="form-group">
+                    <label>Profile Name (Child's Name)</label>
+                    <input type="text" id="profileName" placeholder="e.g., Rayna Sharma" value="">
+                </div>
+
+                <div class="form-group">
+                    <label>Child Login Username</label>
+                    <input type="text" id="childUsername" placeholder="e.g., rayna" value="">
+                </div>
+
+                <div class="form-group">
+                    <label>Child Login Password</label>
+                    <input type="password" id="childPassword" placeholder="e.g., password123" value="">
+                </div>
+
+                <div class="form-group">
+                    <label>Parent Username (Optional)</label>
+                    <input type="text" id="parentName" placeholder="e.g., rayna-parent" value="">
+                </div>
+
+                <div class="form-group">
+                    <label>Parent Password (Optional)</label>
+                    <input type="password" id="parentPassword" placeholder="e.g., parentpass123" value="">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="createProfile()">Create Profile</button>
+                    <button class="btn-secondary" onclick="resetForm()">Clear</button>
+                </div>
+
+                <div id="result" class="result"></div>
+            </div>
+
+            <div class="section warning">
+                <h2>⚠️ Stored Accounts Status</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Count</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Users (Direct)</td>
+                            <td><span id="userCount" class="badge badge-danger">0</span></td>
+                            <td><span id="userStatus">None</span></td>
+                        </tr>
+                        <tr>
+                            <td>Profiles (Dashboards)</td>
+                            <td><span id="dashCount" class="badge badge-danger">0</span></td>
+                            <td><span id="dashStatus">None</span></td>
+                        </tr>
+                        <tr>
+                            <td>DojoData (Fallback)</td>
+                            <td><span id="dojoStatus">None</span></td>
+                            <td><span id="dojoDetails">-</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;"><button class="btn-secondary" onclick="refreshStatus()" style="width: auto;">Refresh Status</button></p>
+            </div>
+
+            <div class="section">
+                <h2>📖 Step-by-Step: Using Admin Panel</h2>
+                <ol style="margin-left: 20px;">
+                    <li>Go to <a href="admin.html" target="_blank" style="color: #667eea;">Admin Panel</a></li>
+                    <li>Login as Admin: <code>Admin / LionMode2026!</code></li>
+                    <li>Click "Profile" tab</li>
+                    <li>Fill in child name in "Profile Name" field</li>
+                    <li>Enter "Child Login Username" and "Child Login Password"</li>
+                    <li>Optionally add parent credentials</li>
+                    <li>Click "Save Changes"</li>
+                    <li>Return to <a href="login.html" style="color: #667eea;">Login</a> and test</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getStorageCandidates() {
+            const stores = [];
+            try { if (window.localStorage) stores.push(window.localStorage); } catch (e) {}
+            try { if (window.sessionStorage) stores.push(window.sessionStorage); } catch (e) {}
+            return stores;
+        }
+
+        function parseJson(value) {
+            try { return JSON.parse(value); } catch (e) { return null; }
+        }
+
+        function getStoredItem(key) {
+            const stores = getStorageCandidates();
+            for (const store of stores) {
+                try {
+                    const value = store.getItem(key);
+                    if (value !== null) return value;
+                } catch (e) {}
+            }
+            return null;
+        }
+
+        function setStoredItem(key, value) {
+            const stores = getStorageCandidates();
+            stores.forEach(store => {
+                try { store.setItem(key, value); } catch (e) {}
+            });
+        }
+
+        function createProfile() {
+            const profileName = document.getElementById('profileName').value.trim();
+            const childUsername = document.getElementById('childUsername').value.trim();
+            const childPassword = document.getElementById('childPassword').value.trim();
+            const parentName = document.getElementById('parentName').value.trim();
+            const parentPassword = document.getElementById('parentPassword').value.trim();
+
+            const result = document.getElementById('result');
+
+            if (!profileName || !childUsername || !childPassword) {
+                result.className = 'result error';
+                result.innerHTML = '❌ Profile name, child username, and child password are required';
+                return;
+            }
+
+            // Get current data
+            const usersStr = getStoredItem('users') || '[]';
+            const dashStr = getStoredItem('dashboards') || '{}';
+            let users = parseJson(usersStr) || [];
+            let dashboards = parseJson(dashStr) || {};
+
+            // Create profile
+            const profile = {
+                name: profileName,
+                childUsername,
+                childPassword,
+            };
+            if (parentName) profile.parentName = parentName;
+            if (parentPassword) profile.parentPassword = parentPassword;
+
+            // Add to dashboards
+            dashboards[profileName] = profile;
+
+            // Add users
+            if (!users) users = [];
+            // Remove old entries for this profile
+            users = users.filter(u => u.childName !== profileName);
+
+            // Add new athlete user
+            users.push({
+                name: childUsername,
+                password: childPassword,
+                role: 'athlete',
+                childName: profileName
+            });
+
+            // Add parent user if provided
+            if (parentName && parentPassword) {
+                users = users.filter(u => u.childName !== profileName || u.role !== 'parent');
+                users.push({
+                    name: parentName,
+                    password: parentPassword,
+                    role: 'parent',
+                    childName: profileName
+                });
+            }
+
+            // Save
+            setStoredItem('users', JSON.stringify(users));
+            setStoredItem('dashboards', JSON.stringify(dashboards));
+            setStoredItem('dojoData', JSON.stringify(profile));
+
+            result.className = 'result success';
+            result.innerHTML = `
+                ✅ Profile created successfully!<br><br>
+                <strong>Child Login:</strong><br>
+                Username: <code>${childUsername}</code><br>
+                Password: <code>${childPassword}</code><br>
+                ${parentName ? `<br><strong>Parent Login:</strong><br>Username: <code>${parentName}</code><br>Password: <code>${parentPassword}</code>` : ''}
+                <br><br>
+                <a href="login.html" style="color: #28a745; font-weight: bold;">Go to Login →</a>
+            `;
+
+            setTimeout(refreshStatus, 500);
+        }
+
+        function resetForm() {
+            document.getElementById('profileName').value = '';
+            document.getElementById('childUsername').value = '';
+            document.getElementById('childPassword').value = '';
+            document.getElementById('parentName').value = '';
+            document.getElementById('parentPassword').value = '';
+            document.getElementById('result').className = 'result';
+        }
+
+        function refreshStatus() {
+            const usersStr = getStoredItem('users');
+            const dashStr = getStoredItem('dashboards');
+            const dojoStr = getStoredItem('dojoData');
+
+            const users = parseJson(usersStr) || [];
+            const dashboards = parseJson(dashStr) || {};
+            const dojoData = parseJson(dojoStr);
+
+            const userCount = document.getElementById('userCount');
+            const userStatus = document.getElementById('userStatus');
+            const dashCount = document.getElementById('dashCount');
+            const dashStatus = document.getElementById('dashStatus');
+            const dojoStatus = document.getElementById('dojoStatus');
+            const dojoDetails = document.getElementById('dojoDetails');
+
+            const athleteUsers = users.filter(u => (u.role || '').toLowerCase() === 'athlete');
+
+            userCount.textContent = athleteUsers.length;
+            userCount.className = 'badge ' + (athleteUsers.length > 0 ? 'badge-success' : 'badge-danger');
+            userStatus.innerHTML = athleteUsers.length > 0
+                ? athleteUsers.map(u => `<code>${u.name}</code>`).join(', ')
+                : 'None';
+
+            dashCount.textContent = Object.keys(dashboards).length;
+            dashCount.className = 'badge ' + (Object.keys(dashboards).length > 0 ? 'badge-success' : 'badge-danger');
+            dashStatus.innerHTML = Object.keys(dashboards).length > 0
+                ? Object.keys(dashboards).map(k => `<code>${k}</code>`).join(', ')
+                : 'None';
+
+            dojoStatus.innerHTML = dojoData
+                ? '<span class="badge badge-success">✓</span>'
+                : '<span class="badge badge-warning">None</span>';
+            dojoDetails.innerHTML = dojoData
+                ? `<code>${dojoData.name || 'Unnamed'}</code>`
+                : '-';
+        }
+
+        document.addEventListener('DOMContentLoaded', refreshStatus);
+    </script>
+</body>
+</html>

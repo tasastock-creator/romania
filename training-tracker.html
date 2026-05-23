@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Tracker - LionMode Elite Dashboard</title>
+    <link rel="stylesheet" href="style.css?v=5">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+            <div class="dashboard-sidebar__brand">
+                <img class="dashboard-sidebar__logo" src="home__lionmode-logo.webp" alt="LionMode Elite logo">
+                <div class="dashboard-sidebar__roadmap">ROAD TO <span>Romania 2026</span></div>
+            </div>
+            <ul id="dashboard-sidebar-nav" class="dashboard-sidebar__nav"></ul>
+            <div class="dashboard-sidebar__quote">
+                “Discipline today<br>excellence tomorrow<br>champion forever”
+            </div>
+        </aside>
+        <main class="dashboard-main">
+            <section class="dashboard-hero">
+                <div class="dashboard-athlete-card">
+                    <div class="dashboard-athlete-card__photo-wrap">
+                        <div class="dashboard-page-hero-icon"><i class="fa-regular fa-calendar-check"></i></div>
+                    </div>
+                    <div class="dashboard-athlete-card__summary">
+                        <div class="dashboard-athlete-card__title">
+                            <h1>Training Tracker</h1>
+                            <p>Monitor attendance, session completion, and growth targets throughout the training cycle.</p>
+                        </div>
+                        <div class="dashboard-athlete-card__meta" id="tracker-meta">
+                            <div class="meta-row"><span>Current Phase</span><strong>Preparation</strong></div>
+                            <div class="meta-row"><span>Weekly Goal</span><strong>4 sessions</strong></div>
+                            <div class="meta-row"><span>Status</span><strong>On track</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="dashboard-grid dashboard-grid--upper">
+                <article class="dashboard-panel dashboard-panel--strengths">
+                    <div class="dashboard-panel__title dashboard-panel__title--green"><h2>Session Attendance</h2></div>
+                    <ul class="dashboard-list dashboard-list--good">
+                        <li>12 out of 14 group sessions completed</li>
+                        <li>6 of 8 one-on-one PT sessions attended</li>
+                        <li>4 of 5 at-home program submissions done</li>
+                    </ul>
+                </article>
+                <article class="dashboard-panel dashboard-panel--weaknesses">
+                    <div class="dashboard-panel__title dashboard-panel__title--red"><h2>Training Gaps</h2></div>
+                    <ul class="dashboard-list dashboard-list--warn">
+                        <li>Maintain energy in late practice rounds</li>
+                        <li>Finish kata flow with stronger ending stance</li>
+                        <li>Improve recovery between drills</li>
+                    </ul>
+                </article>
+                <article class="dashboard-panel dashboard-panel--activity">
+                    <div class="dashboard-panel__title"><h2>Progress Insights</h2></div>
+                    <p>The athlete is steadily building consistency. Focus on session quality, deliberate repetitions, and smart recovery to sustain momentum.</p>
+                </article>
+            </section>
+            <section class="dashboard-grid dashboard-grid--lower">
+                <article class="dashboard-panel dashboard-panel--goals">
+                    <div class="dashboard-panel__title dashboard-panel__title--gold"><h2>Weekly Goals</h2></div>
+                    <ul class="dashboard-number-list">
+                        <li>Complete 4 training sessions</li>
+                        <li>Submit all at-home drills</li>
+                        <li>Record one coach feedback video</li>
+                    </ul>
+                </article>
+                <article class="dashboard-panel dashboard-panel--note">
+                    <div class="dashboard-panel__title dashboard-panel__title--gold"><h2>Coach Notes</h2></div>
+                    <p>Keep pushing pace through footwork drills and keep notes after each session to accelerate improvement.</p>
+                </article>
+                <article class="dashboard-panel dashboard-panel--events">
+                    <div class="dashboard-panel__title"><h2>Next Practices</h2></div>
+                    <ul class="dashboard-event-list">
+                        <li>Technique clinic – Wednesday</li>
+                        <li>Power sparring – Friday</li>
+                        <li>Recovery session – Sunday</li>
+                    </ul>
+                </article>
+            </section>
+        </main>
+    </div>
+    <script src="dashboard-sidebar.js"></script>
+</body>
+</html>

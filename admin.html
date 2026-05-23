@@ -1,0 +1,3175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Dojo Website</title>
+    <link rel="stylesheet" href="style.css?v=4">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(90, 69, 22, 0.16), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(90, 69, 22, 0.1), transparent 24%),
+                #070707;
+        }
+        .admin-container {
+            max-width: 1540px;
+            margin: 24px auto;
+            background: transparent;
+            padding: 24px;
+        }
+        .admin-topbar {
+            align-items: center;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .admin-container h1 {
+            color: #e0b60a;
+            margin: 0;
+            text-align: left;
+            font-size: 2.1rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .homepage-return-btn {
+            align-items: center;
+            background: #e0b60a;
+            border: 1px solid #e0b60a;
+            border-radius: 999px;
+            color: #070707;
+            display: inline-flex;
+            gap: 8px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            padding: 11px 16px;
+            text-decoration: none;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .homepage-return-btn:hover {
+            background: #f2cb05;
+            color: #070707;
+        }
+        .admin-shell {
+            display: grid;
+            grid-template-columns: 340px minmax(0, 1fr);
+            gap: 22px;
+            align-items: start;
+        }
+        .admin-sidebar-panel,
+        .admin-editor-panel {
+            background: linear-gradient(180deg, rgba(19, 19, 19, 0.98), rgba(10, 10, 10, 0.96));
+            border: 1px solid rgba(255, 214, 120, 0.12);
+            border-radius: 22px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.33);
+        }
+        .admin-sidebar-panel {
+            padding: 18px;
+            position: sticky;
+            top: 18px;
+        }
+        .admin-editor-panel {
+            padding: 22px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #e0b60a;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            background-color: #2a2a2a;
+            color: #f3f3f3;
+        }
+        .form-group textarea {
+            height: 80px;
+        }
+        .save-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #e0b60a;
+            color: #0e0e0e;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .save-btn:hover {
+            background-color: #f2cb05;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #e0b60a;
+        }
+        .admin-meta {
+            align-items: center;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .admin-session {
+            color: #aaa;
+            font-size: 0.95rem;
+        }
+        .logout-btn {
+            background-color: transparent;
+            border: 1px solid #e0b60a;
+            border-radius: 6px;
+            color: #e0b60a;
+            cursor: pointer;
+            padding: 8px 12px;
+            font-weight: bold;
+        }
+        .logout-btn:hover {
+            background-color: #e0b60a;
+            color: #0e0e0e;
+        }
+        .child-management {
+            margin-bottom: 24px;
+            padding: 18px;
+            background:
+                linear-gradient(180deg, rgba(224, 182, 10, 0.11), rgba(16, 16, 16, 0.96));
+            border: 1px solid rgba(224, 182, 10, 0.24);
+            border-radius: 18px;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.28);
+        }
+        .child-management__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+            gap: 12px;
+        }
+        .child-management__subtitle {
+            color: #bdbdbd;
+            font-size: 0.86rem;
+            line-height: 1.45;
+            margin: 7px 0 0;
+        }
+        .child-count {
+            color: #f3d37a;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            margin-top: 6px;
+            text-transform: uppercase;
+        }
+        .selected-profile-pill {
+            align-items: center;
+            background: rgba(0, 0, 0, 0.38);
+            border: 1px solid rgba(224, 182, 10, 0.2);
+            border-radius: 999px;
+            color: #dedede;
+            display: inline-flex;
+            font-size: 0.82rem;
+            gap: 8px;
+            margin-bottom: 14px;
+            padding: 8px 11px;
+        }
+        .selected-profile-pill strong {
+            color: #e0b60a;
+        }
+        .profile-select-wrap {
+            display: grid;
+            gap: 7px;
+            margin-bottom: 12px;
+        }
+        .profile-select-wrap label {
+            color: #e0b60a;
+            font-size: 0.84rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .profile-select-wrap select {
+            appearance: none;
+            background:
+                linear-gradient(135deg, rgba(224, 182, 10, 0.14), rgba(28, 28, 28, 0.96));
+            border: 1px solid rgba(224, 182, 10, 0.34);
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 800;
+            padding: 12px 14px;
+            width: 100%;
+        }
+        .child-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .child-actions .save-btn,
+        .child-actions .secondary-btn {
+            width: auto;
+            margin-top: 0;
+        }
+        .child-management {
+            position: relative;
+        }
+        .delete-profile-btn {
+            display: none;
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 50;
+            background: rgba(179, 28, 28, 0.08);
+            border: 1px solid rgba(179, 28, 28, 0.24);
+            color: #f5c6c6;
+            border-radius: 999px;
+            padding: 6px 9px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.18s ease, opacity 0.18s ease;
+        }
+        .delete-profile-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.95;
+        }
+        .child-management__header h2 {
+            margin: 0;
+            color: #e0b60a;
+            font-size: 1.15rem;
+        }
+        .admin-profile-manager {
+            margin-bottom: 22px;
+        }
+        .section-title {
+            color: #f3f3f3;
+            font-size: 1rem;
+            margin: 24px 0 10px;
+            padding-top: 8px;
+            border-top: 1px solid #333;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .admin-helper {
+            color: #8d8d8d;
+            font-size: 0.82rem;
+            margin-top: 6px;
+            line-height: 1.45;
+        }
+        .secondary-btn {
+            display: inline-block;
+            padding: 10px 14px;
+            background: transparent;
+            color: #e0b60a;
+            border: 1px solid #e0b60a;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .secondary-btn:hover {
+            background: #e0b60a;
+            color: #0e0e0e;
+        }
+        .homepage-edit-btn {
+            align-items: center;
+            display: inline-flex;
+            gap: 8px;
+        }
+        .homepage-editor-block {
+            background:
+                linear-gradient(180deg, rgba(224, 182, 10, 0.08), rgba(17, 17, 17, 0.92));
+            border: 1px solid rgba(224, 182, 10, 0.2);
+            border-radius: 18px;
+            padding: 18px;
+        }
+        .homepage-simple-intro {
+            background: rgba(0, 0, 0, 0.26);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            color: #d8d8d8;
+            line-height: 1.55;
+            margin: 0 0 18px;
+            padding: 14px 16px;
+        }
+        .homepage-editor-grid {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .homepage-editor-section {
+            color: #f3d37a;
+            font-size: 1rem;
+            letter-spacing: 0.06em;
+            margin: 0 0 12px;
+            text-transform: uppercase;
+        }
+        .homepage-simple-section {
+            background: rgba(9, 9, 9, 0.72);
+            border: 1px solid rgba(255, 214, 120, 0.14);
+            border-radius: 16px;
+            margin-bottom: 18px;
+            padding: 16px;
+        }
+        .homepage-simple-section__hint {
+            color: #989898;
+            font-size: 0.84rem;
+            line-height: 1.45;
+            margin: -4px 0 14px;
+        }
+        .homepage-field {
+            display: grid;
+            gap: 6px;
+        }
+        .homepage-field label {
+            color: #e0b60a;
+            font-size: 0.86rem;
+        }
+        .homepage-field textarea {
+            min-height: 92px;
+        }
+        .homepage-field--wide {
+            grid-column: 1 / -1;
+        }
+        .homepage-image-field {
+            display: grid;
+            gap: 10px;
+            grid-column: 1 / -1;
+        }
+        .homepage-image-field__label {
+            color: #e0b60a;
+            font-size: 0.86rem;
+            font-weight: 700;
+        }
+        .homepage-image-uploader {
+            align-items: center;
+            background: #141414;
+            border: 1px dashed rgba(224, 182, 10, 0.38);
+            border-radius: 14px;
+            display: grid;
+            gap: 14px;
+            grid-template-columns: 150px minmax(0, 1fr);
+            padding: 12px;
+        }
+        .homepage-image-preview {
+            aspect-ratio: 16 / 10;
+            background: #050505;
+            border-radius: 10px;
+            height: 94px;
+            object-fit: cover;
+            width: 150px;
+        }
+        .homepage-image-uploader input[type="file"] {
+            background: #242424;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #eee;
+        }
+        .homepage-image-uploader small {
+            color: #9c9c9c;
+            display: block;
+            line-height: 1.4;
+            margin-top: 7px;
+        }
+        .homepage-advanced-json {
+            display: none;
+        }
+        .save-status {
+            margin-top: 14px;
+            color: #9fdd8f;
+            font-size: 0.9rem;
+            min-height: 1.2em;
+        }
+        .save-status.is-pending {
+            color: #f3d37a;
+        }
+        .save-status.is-error {
+            color: #ff8e8e;
+        }
+        .save-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+        .last-saved {
+            color: #8d8d8d;
+            font-size: 0.84rem;
+        }
+        .editor-card {
+            margin-bottom: 20px;
+            padding: 18px;
+            border-radius: 18px;
+            background: rgba(17, 17, 17, 0.9);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .editor-card__title {
+            color: #f3f3f3;
+            font-size: 1rem;
+            margin: 0 0 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-family: 'Oswald', sans-serif;
+        }
+        .profile-preview-card {
+            display: grid;
+            gap: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 18px;
+            background: rgba(17, 17, 17, 0.92);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .profile-preview-card__top {
+            display: grid;
+            grid-template-columns: 110px minmax(0, 1fr);
+            gap: 14px;
+            align-items: center;
+        }
+        .profile-preview-card__photo {
+            width: 110px;
+            height: 130px;
+            object-fit: contain;
+            border-radius: 14px;
+            background: #222;
+        }
+        .profile-preview-card__name {
+            color: #fff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 2rem;
+            line-height: 0.95;
+            text-transform: uppercase;
+        }
+        .profile-preview-card__age {
+            color: #e0b60a;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.05rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+        .preview-stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .preview-chip {
+            padding: 12px;
+            border-radius: 12px;
+            background: #171717;
+            border: 1px solid rgba(255, 214, 120, 0.12);
+        }
+        .preview-chip span {
+            display: block;
+            color: #9a9a9a;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+        .preview-chip strong {
+            display: block;
+            color: #fff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.15rem;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .score-hero {
+            display: grid;
+            grid-template-columns: 130px minmax(0, 1fr);
+            gap: 14px;
+            align-items: center;
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(17, 17, 17, 0.92);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .score-ring-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: conic-gradient(#d1a132 0% 78%, #2c2c2c 78% 100%);
+            position: relative;
+        }
+        .score-ring-preview::before {
+            content: "";
+            position: absolute;
+            inset: 12px;
+            border-radius: 50%;
+            background: #101010;
+        }
+        .score-ring-preview span {
+            position: relative;
+            z-index: 1;
+            color: #fff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.3rem;
+        }
+        .score-hero__copy strong {
+            display: block;
+            color: #fff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+        }
+        .score-hero__copy p {
+            color: #b6b6b6;
+            margin-top: 8px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+        .mini-dashboard-preview {
+            display: grid;
+            gap: 14px;
+            margin-top: 16px;
+        }
+        .mini-dashboard-preview__title {
+            color: #fff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .mini-dashboard-preview__mode {
+            color: #e0b60a;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.82rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-top: -6px;
+        }
+        .mini-panel {
+            padding: 14px;
+            border-radius: 16px;
+            background: rgba(17, 17, 17, 0.92);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .preview-section.is-hidden {
+            display: none;
+        }
+        .mini-panel__head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .mini-panel__head strong {
+            color: #fff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.95rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .mini-panel__hint {
+            color: #8d8d8d;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .mini-list-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .mini-list-box {
+            padding: 12px;
+            border-radius: 12px;
+            background: #151515;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .mini-list-box--good {
+            border-color: rgba(108, 183, 77, 0.26);
+            box-shadow: inset 0 0 0 1px rgba(108, 183, 77, 0.08);
+        }
+        .mini-list-box--focus {
+            border-color: rgba(201, 78, 78, 0.28);
+            box-shadow: inset 0 0 0 1px rgba(201, 78, 78, 0.08);
+        }
+        .mini-list-box__title {
+            color: #fff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .mini-list {
+            display: grid;
+            gap: 7px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .mini-list li {
+            color: #d9d9d9;
+            font-size: 0.84rem;
+            line-height: 1.35;
+            padding-left: 14px;
+            position: relative;
+        }
+        .mini-list li::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #d1a132;
+            position: absolute;
+            left: 0;
+            top: 0.45rem;
+        }
+        .mini-activity-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .mini-activity-card {
+            padding: 12px;
+            border-radius: 14px;
+            background: #151515;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .mini-activity-card__label {
+            color: #a0a0a0;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+        .mini-activity-card__value {
+            color: #fff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.4rem;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .mini-activity-card__meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .mini-activity-card__status,
+        .mini-activity-card__percent {
+            color: #d9d9d9;
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .mini-progress {
+            width: 100%;
+            height: 7px;
+            border-radius: 999px;
+            background: #292929;
+            overflow: hidden;
+        }
+        .mini-progress span {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, #c19322, #e5bb53);
+            border-radius: inherit;
+        }
+        .mini-rows {
+            display: grid;
+            gap: 10px;
+        }
+        .mini-row {
+            display: grid;
+            gap: 3px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .mini-row:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .mini-row strong {
+            color: #fff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.92rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .mini-row span,
+        .mini-row p {
+            color: #c8c8c8;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            margin: 0;
+        }
+        .mini-note {
+            color: #d3d3d3;
+            font-size: 0.84rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .mini-empty {
+            color: #8d8d8d;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .slider-field {
+            display: grid;
+            grid-template-columns: 1fr 86px;
+            gap: 12px;
+            align-items: center;
+        }
+        .slider-field input[type="range"] {
+            width: 100%;
+            accent-color: #e0b60a;
+        }
+        .slider-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            border-radius: 999px;
+            background: #2a2a2a;
+            color: #fff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.05rem;
+        }
+        .builder {
+            margin-top: 8px;
+            padding: 14px;
+            border-radius: 10px;
+            background: #141414;
+            border: 1px solid #2d2d2d;
+        }
+        .builder-list {
+            display: grid;
+            gap: 10px;
+        }
+        .builder-row {
+            display: grid;
+            gap: 10px;
+            align-items: end;
+            padding: 12px;
+            border-radius: 8px;
+            background: #202020;
+            border: 1px solid #313131;
+        }
+        .builder-row--three {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+        }
+        .builder-row--four {
+            grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+        }
+        .builder-row--five {
+            grid-template-columns: 1.2fr .8fr .7fr .9fr 1.1fr auto;
+        }
+        .builder-row label {
+            color: #cfcfcf;
+            font-size: 0.76rem;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .builder-row input,
+        .builder-row select,
+        .builder-row textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: none;
+            background: #2a2a2a;
+            color: #f3f3f3;
+        }
+        .builder-row textarea {
+            min-height: 76px;
+            resize: vertical;
+        }
+        .builder-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 12px;
+        }
+        .builder-add {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e0b60a;
+            background: transparent;
+            color: #e0b60a;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .builder-remove {
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            border: 1px solid #b24b4b;
+            background: transparent;
+            color: #ff8e8e;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .builder-raw {
+            display: none;
+        }
+        .list-builder {
+            margin-top: 8px;
+            padding: 14px;
+            border-radius: 10px;
+            background: #141414;
+            border: 1px solid #2d2d2d;
+        }
+        .list-builder__items {
+            display: grid;
+            gap: 10px;
+        }
+        .list-builder__row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #202020;
+            border: 1px solid #313131;
+        }
+        .list-builder__row input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            background: #2a2a2a;
+            color: #f3f3f3;
+        }
+        .list-builder__actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 12px;
+        }
+        .rich-note-card {
+            display: grid;
+            gap: 12px;
+            margin-top: 8px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #141414;
+            border: 1px solid #2d2d2d;
+        }
+        .rich-note-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .mini-btn {
+            padding: 8px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(224, 182, 10, 0.45);
+            background: transparent;
+            color: #e0b60a;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .mini-btn:hover {
+            background: rgba(224, 182, 10, 0.12);
+        }
+        .rich-note-card textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+        .guided-grid {
+            display: grid;
+            gap: 16px;
+        }
+        .upload-card {
+            margin-top: 8px;
+            padding: 14px;
+            border-radius: 12px;
+            background: #141414;
+            border: 1px dashed rgba(224, 182, 10, 0.35);
+        }
+        .upload-card__title {
+            color: #f3f3f3;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .upload-card__hint {
+            color: #8d8d8d;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            margin-top: 8px;
+        }
+        .editor-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .editor-tab {
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(224, 182, 10, 0.25);
+            background: #141414;
+            color: #d2d2d2;
+            cursor: pointer;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        .editor-tab.is-active {
+            background: #e0b60a;
+            color: #0e0e0e;
+            border-color: #e0b60a;
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.is-active {
+            display: block;
+        }
+        @media (max-width: 760px) {
+            .admin-shell {
+                grid-template-columns: 1fr;
+            }
+            .admin-sidebar-panel {
+                position: static;
+            }
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+            .homepage-editor-grid {
+                grid-template-columns: 1fr;
+            }
+            .homepage-field--wide {
+                grid-column: auto;
+            }
+            .homepage-image-uploader {
+                grid-template-columns: 1fr;
+            }
+            .homepage-image-preview {
+                height: auto;
+                width: 100%;
+            }
+            .child-management__header,
+            .admin-meta,
+            .admin-topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .builder-row--three,
+            .builder-row--four,
+            .builder-row--five {
+                grid-template-columns: 1fr;
+            }
+            .list-builder__row {
+                grid-template-columns: 1fr;
+            }
+            .profile-preview-card__top,
+            .score-hero {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-topbar">
+            <h1>Admin Panel</h1>
+            <a class="homepage-return-btn" href="index.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Back to Homepage</a>
+        </div>
+        <div class="admin-meta">
+            <div class="admin-session" id="admin-session"></div>
+            <button class="logout-btn" id="admin-logout" type="button">Logout</button>
+        </div>
+        <div class="child-management admin-profile-manager" aria-labelledby="profile-manager-title">
+            <div class="child-management__header">
+                <div>
+                    <h2 id="profile-manager-title">All Child Profiles</h2>
+                    <p class="child-management__subtitle">Choose a child from the dropdown to open and edit their dashboard profile. After making changes, press Save Changes.</p>
+                    <div class="child-count" id="child-count">0 profiles</div>
+                </div>
+                <div class="child-actions">
+                    <button type="button" id="new-child-profile" class="save-btn">New Profile</button>
+                    <button type="button" id="repair-child-logins" class="secondary-btn">Repair Child Logins</button>
+                </div>
+            </div>
+            <div class="selected-profile-pill"><i class="fa-solid fa-user-pen" aria-hidden="true"></i>Editing: <strong id="selected-profile-label">No profile selected</strong></div>
+            <div class="profile-select-wrap">
+                <label for="profile-select">Select Child Profile To Edit</label>
+                <select id="profile-select">
+                    <option value="">No profiles saved yet</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" id="delete-child-profile" class="delete-profile-btn">Delete</button>
+        <div class="admin-shell">
+            <aside class="admin-sidebar-panel">
+                <div class="profile-preview-card">
+                    <div class="profile-preview-card__top">
+                        <img id="preview-photo" class="profile-preview-card__photo" src="dashboard-athlete-reference.png" alt="Child preview photo">
+                        <div>
+                            <div id="preview-name" class="profile-preview-card__name">New Athlete</div>
+                            <div id="preview-age" class="profile-preview-card__age">Ready to build</div>
+                        </div>
+                    </div>
+                    <div class="preview-stats">
+                        <div class="preview-chip">
+                            <span>Division</span>
+                            <strong id="preview-division">Not set</strong>
+                        </div>
+                        <div class="preview-chip">
+                            <span>Events</span>
+                            <strong id="preview-events">Not set</strong>
+                        </div>
+                        <div class="preview-chip">
+                            <span>Belt</span>
+                            <strong id="preview-belt">Not set</strong>
+                        </div>
+                        <div class="preview-chip">
+                            <span>Coach</span>
+                            <strong id="preview-coach">Not set</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="score-hero">
+                    <div id="preview-readiness-ring" class="score-ring-preview">
+                        <span id="preview-readiness">0%</span>
+                    </div>
+                    <div class="score-hero__copy">
+                        <strong>Romania Readiness</strong>
+                        <p>Use sliders and dashboard cards on the right to adjust the child’s score, activity, and report quickly.</p>
+                    </div>
+                </div>
+                <div class="mini-dashboard-preview">
+                    <div class="mini-dashboard-preview__title">Live Dashboard Preview</div>
+                    <div id="preview-mode-label" class="mini-dashboard-preview__mode">Profile Mode</div>
+                    <div class="mini-panel preview-section" data-preview-section="performance">
+                        <div class="mini-panel__head">
+                            <strong>Strength Snapshot</strong>
+                            <span class="mini-panel__hint">Live lists</span>
+                        </div>
+                        <div class="mini-list-grid">
+                            <div class="mini-list-box mini-list-box--good">
+                                <div class="mini-list-box__title">Strengths</div>
+                                <ul id="preview-strengths" class="mini-list"></ul>
+                            </div>
+                            <div class="mini-list-box mini-list-box--focus">
+                                <div class="mini-list-box__title">Areas To Improve</div>
+                                <ul id="preview-weaknesses" class="mini-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mini-panel preview-section" data-preview-section="performance">
+                        <div class="mini-panel__head">
+                            <strong>Activity Cards</strong>
+                            <span class="mini-panel__hint">Live sliders</span>
+                        </div>
+                        <div id="preview-activity" class="mini-activity-grid"></div>
+                    </div>
+                    <div class="mini-panel preview-section" data-preview-section="performance">
+                        <div class="mini-panel__head">
+                            <strong>Upcoming Events</strong>
+                            <span class="mini-panel__hint">Next items</span>
+                        </div>
+                        <div id="preview-events-list" class="mini-rows"></div>
+                    </div>
+                    <div class="mini-panel preview-section" data-preview-section="report">
+                        <div class="mini-panel__head">
+                            <strong>Coach Report</strong>
+                            <span class="mini-panel__hint">Feedback + note</span>
+                        </div>
+                        <div id="preview-feedback-list" class="mini-rows"></div>
+                        <p id="preview-coach-note" class="mini-note"></p>
+                    </div>
+                </div>
+                <div class="child-management">
+                    <div class="child-management__header">
+                        <h2>Admin Tools</h2>
+                        <div class="child-actions">
+                            <button type="button" id="edit-homepage" class="secondary-btn homepage-edit-btn"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>Edit Homepage</button>
+                            <button type="button" id="preview-child-dashboard" class="secondary-btn">Preview Dashboard</button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            <div class="admin-editor-panel">
+        <form id="admin-form">
+            <div id="editor-tabs" class="editor-tabs"></div>
+            <h2 class="section-title">Child Profile</h2>
+            <div class="two-col">
+                <div class="form-group">
+                    <label for="name">Child's Name</label>
+                    <input type="text" id="name" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="photo">Photo URL or local path</label>
+                    <input type="text" id="photo" name="photo">
+                </div>
+            </div>
+            <div class="two-col">
+                <div class="form-group">
+                    <label for="belt">Belt</label>
+                    <input type="text" id="belt" name="belt">
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" min="1" max="100">
+                </div>
+            </div>
+            <div class="two-col">
+                <div class="form-group">
+                    <label for="division">Division</label>
+                    <input type="text" id="division" name="division" placeholder="8 & Under">
+                </div>
+                <div class="form-group">
+                    <label for="eventType">Event Type</label>
+                    <input type="text" id="eventType" name="eventType" placeholder="Kata & Kumite">
+                </div>
+            </div>
+            <div class="two-col">
+                <div class="form-group">
+                    <label for="athleteId">Athlete ID</label>
+                    <input type="text" id="athleteId" name="athleteId" placeholder="LMELITE-RP-001">
+                </div>
+                <div class="form-group">
+                    <label for="joinedProgram">Joined Program</label>
+                    <input type="text" id="joinedProgram" name="joinedProgram" placeholder="January 2025">
+                </div>
+            </div>
+            <div class="two-col">
+                <div class="form-group">
+                    <label for="clubName">Club Name</label>
+                    <input type="text" id="clubName" name="clubName" placeholder="LionMode Elite">
+                </div>
+                <div class="form-group">
+                    <label for="coachName">Coach Name</label>
+                    <input type="text" id="coachName" name="coachName" placeholder="Sensei Sudhir">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="goal">Main Goal</label>
+                <input type="text" id="goal" name="goal" placeholder="World Champion – Romania 2026">
+            </div>
+            <div class="two-col">
+                <div class="form-group">
+                    <label for="kata">Kata Category</label>
+                    <input type="text" id="kata" name="kata" placeholder="Shotokan">
+                </div>
+                <div class="form-group">
+                    <label for="kumite">Kumite Category</label>
+                    <input type="text" id="kumite" name="kumite" placeholder="Kumite">
+                </div>
+            </div>
+
+            <h2 class="section-title">Login Accounts</h2>
+            <div class="two-col">
+                <div class="form-group">
+                    <label for="childUsername">Child Login Username</label>
+                    <input type="text" id="childUsername" name="childUsername" placeholder="rayna">
+                </div>
+                <div class="form-group">
+                    <label for="childPassword">Child Login Password</label>
+                    <input type="text" id="childPassword" name="childPassword" placeholder="Set child password">
+                </div>
+            </div>
+            <div class="two-col">
+                <div class="form-group">
+                    <label for="parentName">Parent Login Username</label>
+                    <input type="text" id="parentName" name="parentName" placeholder="rayna-parent">
+                </div>
+                <div class="form-group">
+                    <label for="parentPassword">Parent Login Password</label>
+                    <input type="text" id="parentPassword" name="parentPassword" placeholder="Set parent password">
+                </div>
+            </div>
+            <p class="admin-helper">These logins will automatically be linked to this child’s dashboard.</p>
+
+            <h2 class="section-title">Dashboard Content</h2>
+            <div class="form-group">
+                <label for="strengths">Strengths (comma separated)</label>
+                <div class="list-builder">
+                    <div id="strengths-builder" class="list-builder__items"></div>
+                    <div class="list-builder__actions">
+                        <button type="button" id="add-strength-row" class="builder-add">Add Strength</button>
+                    </div>
+                </div>
+                <textarea id="strengths" class="builder-raw" name="strengths"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="weaknesses">Areas to Improve (comma separated)</label>
+                <div class="list-builder">
+                    <div id="weaknesses-builder" class="list-builder__items"></div>
+                    <div class="list-builder__actions">
+                        <button type="button" id="add-weakness-row" class="builder-add">Add Area</button>
+                    </div>
+                </div>
+                <textarea id="weaknesses" class="builder-raw" name="weaknesses"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="goals">Goals (comma separated)</label>
+                <div class="list-builder">
+                    <div id="goals-builder" class="list-builder__items"></div>
+                    <div class="list-builder__actions">
+                        <button type="button" id="add-goal-row" class="builder-add">Add Goal</button>
+                    </div>
+                </div>
+                <textarea id="goals" class="builder-raw" name="goals"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="coachNote">Coach's Note</label>
+                <div class="rich-note-card">
+                    <div class="rich-note-toolbar">
+                        <button type="button" id="note-template-focus" class="mini-btn">Focus Template</button>
+                        <button type="button" id="note-template-progress" class="mini-btn">Progress Template</button>
+                        <button type="button" id="note-template-competition" class="mini-btn">Competition Template</button>
+                    </div>
+                    <textarea id="coachNote" name="coachNote" placeholder="Write the child report here..."></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="readiness">Readiness (0-100)</label>
+                <div class="slider-field">
+                    <input type="range" id="readiness" name="readiness" min="0" max="100" value="0">
+                    <span id="readiness-pill" class="slider-pill">0%</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bars">Readiness Score Bars (format: label:value[:icon] per line)</label>
+                <div class="builder">
+                    <div id="readiness-builder" class="builder-list"></div>
+                    <div class="builder-actions">
+                        <button type="button" id="add-readiness-row" class="builder-add">Add Readiness Bar</button>
+                    </div>
+                </div>
+                <textarea id="bars" class="builder-raw" name="bars" placeholder="Technical Skills:75:fa-solid fa-trophy\nPhysical Fitness:72:fa-solid fa-person-running\nMental Strength:70:fa-solid fa-brain\nDiscipline & Attitude:85:fa-solid fa-people-group\nOverall Consistency:78:fa-regular fa-clock"></textarea>
+                <p class="admin-helper">These are the gold score bars shown in the readiness section.</p>
+            </div>
+            <div class="form-group">
+                <label for="activitySummary">Activity Summary Cards (format: title|value|percent|status|icon per line)</label>
+                <div class="builder">
+                    <div id="activity-builder" class="builder-list"></div>
+                    <div class="builder-actions">
+                        <button type="button" id="add-activity-row" class="builder-add">Add Activity Card</button>
+                    </div>
+                </div>
+                <textarea id="activitySummary" class="builder-raw" name="activitySummary" placeholder="Group Sessions|12/14|86|ATTENDED|fa-solid fa-people-group\nPT Sessions|6/8|75|ATTENDED|fa-solid fa-child-reaching\nAt-Home Programs|4/5|80|SUBMITTED|fa-solid fa-house\nVideo Logs|4/5|80|SUBMITTED|fa-solid fa-video"></textarea>
+                <p class="admin-helper">These four cards appear in the Recent Activity Summary panel.</p>
+            </div>
+            <div class="form-group">
+                <label for="events">Upcoming Events (format: date,name,location per line)</label>
+                <div class="builder">
+                    <div id="events-builder" class="builder-list"></div>
+                    <div class="builder-actions">
+                        <button type="button" id="add-event-row" class="builder-add">Add Event</button>
+                    </div>
+                </div>
+                <textarea id="events" class="builder-raw" name="events" placeholder="2026-06-15,Belt Test: Orange Belt,Dojo Main Hall\n2026-07-01,City Tournament,Durban Arena\n2026-07-15,Summer Camp,Training Grounds"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="feedback">Feedback (format: name|comment|color per line)</label>
+                <div class="builder">
+                    <div id="feedback-builder" class="builder-list"></div>
+                    <div class="builder-actions">
+                        <button type="button" id="add-feedback-row" class="builder-add">Add Feedback Item</button>
+                    </div>
+                </div>
+                <textarea id="feedback" class="builder-raw" name="feedback" placeholder="Group Training|12 May 2025. Great energy and focus today.|green\nPT Session|10 May 2025. Improving speed and power.|blue\nAt-Home Program|11 May 2025. Good effort on kata practice.|purple"></textarea>
+            </div>
+            <h2 class="section-title">Additional Athlete Data</h2>
+            <div class="form-group">
+                <label for="attendance">Attendance (one per line)</label>
+                <div class="list-builder">
+                    <div id="attendance-builder" class="builder-list"></div>
+                    <div class="list-builder__actions">
+                        <button type="button" id="add-attendance-row" class="builder-add">Add Attendance Entry</button>
+                    </div>
+                </div>
+                <textarea id="attendance" class="builder-raw" name="attendance" placeholder="2026-05-01 – Present\n2026-05-03 – Absent"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="ptTracking">PT Tracking</label>
+                <input type="text" id="ptTracking" name="ptTracking" placeholder="Completed 6/8 personal training sessions">
+            </div>
+            <div class="form-group">
+                <label for="homeProgram">Home Program Tracking</label>
+                <input type="text" id="homeProgram" name="homeProgram" placeholder="Completed 4/6 at‑home sessions this week">
+            </div>
+            <div class="form-group">
+                <label for="videoLogs">Video Logs (format: title,url per line)</label>
+                <div class="upload-card">
+                    <div class="upload-card__title">Video Log Library</div>
+                    <div id="video-builder" class="builder-list"></div>
+                    <div class="builder-actions">
+                        <button type="button" id="add-video-row" class="builder-add">Add Video Log</button>
+                    </div>
+                    <div class="upload-card__hint">Paste a video title and either a file path or a hosted URL. This keeps each child’s video review area organized.</div>
+                </div>
+                <textarea id="videoLogs" class="builder-raw" name="videoLogs" placeholder="Side Kick Practice,https://example.com/video1\nKumite Sparring,https://example.com/video2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tournamentPrep">Tournament Preparation (one per line)</label>
+                <div class="list-builder">
+                    <div id="prep-builder" class="list-builder__items"></div>
+                    <div class="list-builder__actions">
+                        <button type="button" id="add-prep-row" class="builder-add">Add Prep Step</button>
+                    </div>
+                </div>
+                <textarea id="tournamentPrep" class="builder-raw" name="tournamentPrep" placeholder="Registered for Dolphin League\nWorking on kata timing"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tournamentResults">Tournament Results (one per line)</label>
+                <textarea id="tournamentResults" name="tournamentResults" placeholder="Dolphin League 2025 – Gold\nMASA Tournament 2025 – Silver"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="fitnessTesting">Fitness Testing (format: metric:value per line)</label>
+                <textarea id="fitnessTesting" name="fitnessTesting" placeholder="Push-ups:45\nSit-ups:50\n5km run:22 min"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="mentalPerformance">Mental Performance (format: metric:value per line)</label>
+                <textarea id="mentalPerformance" name="mentalPerformance" placeholder="Confidence:80\nFocus:70\nStress Management:60"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="users">Users (format: name:password:role:childName per line)</label>
+                <textarea id="users" name="users" placeholder="Rayna:secret123:athlete\nShiloh:password456:parent:Rayna\nCoach:coachPass:coach"></textarea>
+                <p class="admin-helper">Advanced: coach/admin accounts can still be managed here. Child and parent accounts above will also be synced into this list automatically.</p>
+            </div>
+            <h2 class="section-title">Homepage Editor</h2>
+            <div class="form-group homepage-editor-block" id="homepage-editor">
+                <p class="homepage-simple-intro">Use this simple editor to update the homepage. Type new headings and paragraphs, or choose an image from your computer. Click <strong>Save Changes</strong> when you are finished.</p>
+                <div id="homepage-editor-fields"></div>
+                <div class="homepage-sidebar-tabs">
+                    <div class="homepage-editor-section">Dashboard Sidebar Tabs</div>
+                    <p class="homepage-simple-section__hint">Edit the child dashboard sidebar links. Add a homepage tab, rename buttons, or remove links from the dashboard menu.</p>
+                    <div id="sidebar-tabs-builder" class="builder-list"></div>
+                    <div class="builder-actions">
+                        <button type="button" id="add-sidebar-tab-row" class="builder-add">Add Sidebar Tab</button>
+                    </div>
+                    <textarea id="sidebarTabs" class="builder-raw" name="sidebarTabs" data-homepage-path="sidebarTabs" data-homepage-type="sidebarTabs" placeholder="Homepage,index.html,fa-solid fa-house\nProfile,profile.html,fa-regular fa-user\nVideo Logs,video-logs.html,fa-regular fa-circle-play"></textarea>
+                </div>
+            </div>
+            <div class="form-group homepage-advanced-json">
+                <label for="siteData">Site Data (JSON)</label>
+                <textarea id="siteData" name="siteData" rows="20" placeholder="{\n  \"schemaVersion\": \"combined-home-v5\",\n  \"hero\": {\n    \"titleHtml\": \"Ultimate Fighting <span class=\\\"hero-title__accent\\\">Martial Arts</span> Club\"\n  }\n}"></textarea>
+                <p style="color:#777;font-size:0.85rem;">Advanced data storage. Hidden from normal admin use.</p>
+            </div>
+            <div class="save-meta">
+                <button type="submit" class="save-btn">Save Changes</button>
+                <div>
+                    <div id="save-status" class="save-status"></div>
+                    <div id="last-saved" class="last-saved">Not saved yet</div>
+                </div>
+            </div>
+        </form>
+        <a href="dashboard.html" class="back-link">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+    <script src="site-defaults.js"></script>
+    <script>
+        const DEFAULT_ADMIN_USER = {
+            name: 'Admin',
+            password: 'LionMode2026!',
+            role: 'admin'
+        };
+
+        const DEFAULT_READINESS_METRICS = [
+            { label: 'Technical Skills', value: 75, icon: 'fa-solid fa-trophy' },
+            { label: 'Physical Fitness', value: 72, icon: 'fa-solid fa-person-running' },
+            { label: 'Mental Strength', value: 70, icon: 'fa-solid fa-brain' },
+            { label: 'Discipline & Attitude', value: 85, icon: 'fa-solid fa-people-group' },
+            { label: 'Overall Consistency', value: 78, icon: 'fa-regular fa-clock' }
+        ];
+        const HOMEPAGE_EDITOR_SECTIONS = [
+            {
+                title: 'Main Header',
+                hint: 'This is the first section people see on the homepage.',
+                fields: [
+                    { label: 'Header Background Image', path: 'hero.image', type: 'image' },
+                    { label: 'Small Top Heading', path: 'hero.eyebrow' },
+                    { label: 'Big Main Heading', path: 'hero.titleHtml', type: 'plainHtml', wide: true },
+                    { label: 'Welcome Line', path: 'hero.subtitle' },
+                    { label: 'Intro Paragraphs', path: 'hero.paragraphs', type: 'lines', wide: true },
+                    { label: 'Button Text', path: 'hero.buttonText' }
+                ]
+            },
+            {
+                title: 'Program Cards',
+                hint: 'These are the four cards under “The Program Combines”.',
+                fields: [
+                    { label: 'Small Section Heading', path: 'programs.eyebrow' },
+                    { label: 'Large Section Heading', path: 'programs.title', wide: true },
+                    { label: 'Card 1 Image', path: 'programs.cards.0.image', type: 'image' },
+                    { label: 'Card 1 Heading', path: 'programs.cards.0.title' },
+                    { label: 'Card 1 Text', path: 'programs.cards.0.description', type: 'textarea', wide: true },
+                    { label: 'Card 2 Image', path: 'programs.cards.1.image', type: 'image' },
+                    { label: 'Card 2 Heading', path: 'programs.cards.1.title' },
+                    { label: 'Card 2 Text', path: 'programs.cards.1.description', type: 'textarea', wide: true },
+                    { label: 'Card 3 Image', path: 'programs.cards.2.image', type: 'image' },
+                    { label: 'Card 3 Heading', path: 'programs.cards.2.title' },
+                    { label: 'Card 3 Text', path: 'programs.cards.2.description', type: 'textarea', wide: true },
+                    { label: 'Card 4 Image', path: 'programs.cards.3.image', type: 'image' },
+                    { label: 'Card 4 Heading', path: 'programs.cards.3.title' },
+                    { label: 'Card 4 Text', path: 'programs.cards.3.description', type: 'textarea', wide: true }
+                ]
+            },
+            {
+                title: 'High-Performance Section',
+                hint: 'This is the larger image and text section explaining LionMode Elite.',
+                fields: [
+                    { label: 'Large Section Image', path: 'about.image', type: 'image' },
+                    { label: 'Small Section Heading', path: 'about.eyebrow' },
+                    { label: 'Large Section Heading', path: 'about.title', wide: true },
+                    { label: 'Main Paragraph', path: 'about.intro', type: 'textarea', wide: true },
+                    { label: 'Bullet List Heading', path: 'about.label' },
+                    { label: 'Bullet List', path: 'about.items', type: 'lines', wide: true },
+                    { label: 'Closing Sentence', path: 'about.closing', type: 'textarea', wide: true }
+                ]
+            },
+            {
+                title: 'Athlete Benefits',
+                hint: 'These are the benefit cards and images on the homepage.',
+                fields: [
+                    { label: 'Small Section Heading', path: 'benefits.eyebrow' },
+                    { label: 'Large Section Heading', path: 'benefits.title' },
+                    { label: 'Benefit 1 Image', path: 'benefits.cards.0.image', type: 'image' },
+                    { label: 'Benefit 1 Heading', path: 'benefits.cards.0.title' },
+                    { label: 'Benefit 1 Text', path: 'benefits.cards.0.description', type: 'textarea', wide: true },
+                    { label: 'Benefit 2 Image', path: 'benefits.cards.1.image', type: 'image' },
+                    { label: 'Benefit 2 Heading', path: 'benefits.cards.1.title' },
+                    { label: 'Benefit 2 Text', path: 'benefits.cards.1.description', type: 'textarea', wide: true },
+                    { label: 'Benefit 3 Image', path: 'benefits.cards.2.image', type: 'image' },
+                    { label: 'Benefit 3 Heading', path: 'benefits.cards.2.title' },
+                    { label: 'Benefit 3 Text', path: 'benefits.cards.2.description', type: 'textarea', wide: true },
+                    { label: 'Prepared For Image', path: 'benefits.preparationImage', type: 'image' },
+                    { label: 'Winter Camp Image', path: 'benefits.campImage', type: 'image' },
+                    { label: 'Mental Support Image', path: 'benefits.mentalImage', type: 'image' }
+                ]
+            },
+            {
+                title: 'Parent & Athlete Expectations',
+                hint: 'These are the two expectation boxes near the bottom of the homepage.',
+                fields: [
+                    { label: 'Parent Box Image', path: 'expectations.parentImage', type: 'image' },
+                    { label: 'Parent Box Heading', path: 'expectations.parentTitle' },
+                    { label: 'Parent Box Paragraph', path: 'expectations.parentIntro', type: 'textarea', wide: true },
+                    { label: 'Parent Bullet List', path: 'expectations.parentItems', type: 'lines', wide: true },
+                    { label: 'Athlete Box Image', path: 'expectations.athleteImage', type: 'image' },
+                    { label: 'Athlete Box Heading', path: 'expectations.athleteTitle' },
+                    { label: 'Athlete Box Paragraph', path: 'expectations.athleteIntro', type: 'textarea', wide: true },
+                    { label: 'Athlete Bullet List', path: 'expectations.athleteItems', type: 'lines', wide: true }
+                ]
+            },
+            {
+                title: 'Roadmap, Login & Footer',
+                hint: 'Final homepage wording and the roadmap poster area.',
+                fields: [
+                    { label: 'Roadmap Background Image', path: 'roadmap.backgroundImage', type: 'image' },
+                    { label: 'Quote Line 1', path: 'quote.lineOne' },
+                    { label: 'Quote Line 2', path: 'quote.lineTwo' },
+                    { label: 'Login Section Heading', path: 'login.title' },
+                    { label: 'Login Section Paragraph', path: 'login.description', type: 'textarea', wide: true },
+                    { label: 'Footer Text', path: 'footer.copy', wide: true }
+                ]
+            }
+        ];
+
+        const DEFAULT_ACTIVITY_SUMMARY = [
+            { title: 'Group Sessions', value: '12/14', percent: 86, status: 'ATTENDED', icon: 'fa-solid fa-people-group' },
+            { title: 'PT Sessions', value: '6/8', percent: 75, status: 'ATTENDED', icon: 'fa-solid fa-child-reaching' },
+            { title: 'At-Home Programs', value: '4/5', percent: 80, status: 'SUBMITTED', icon: 'fa-solid fa-house' },
+            { title: 'Video Logs', value: '4/5', percent: 80, status: 'SUBMITTED', icon: 'fa-solid fa-video' }
+        ];
+
+        let dashboards = {};
+        let selectedChildName = null;
+        let autosaveTimer = null;
+        let isAutosavingEnabled = false;
+        let activeEditorTab = 'profile';
+        const SHARED_STATE_MARKER = '__lionModeEliteSharedState';
+
+        function getWindowNameState() {
+            try {
+                const parsed = JSON.parse(window.name || '{}');
+                if (parsed && parsed.marker === SHARED_STATE_MARKER && parsed.data && typeof parsed.data === 'object') {
+                    return parsed.data;
+                }
+            } catch (e) {}
+            return {};
+        }
+
+        function setWindowNameItem(key, value) {
+            try {
+                const data = getWindowNameState();
+                data[key] = value;
+                window.name = JSON.stringify({ marker: SHARED_STATE_MARKER, data });
+            } catch (e) {}
+        }
+
+        function getWindowNameItem(key) {
+            const data = getWindowNameState();
+            return Object.prototype.hasOwnProperty.call(data, key) ? data[key] : null;
+        }
+
+        function removeWindowNameItem(key) {
+            try {
+                const data = getWindowNameState();
+                delete data[key];
+                window.name = JSON.stringify({ marker: SHARED_STATE_MARKER, data });
+            } catch (e) {}
+        }
+
+        function getStorageCandidates() {
+            const stores = [];
+            try { if (window.localStorage) stores.push(window.localStorage); } catch (e) {}
+            try { if (window.sessionStorage) stores.push(window.sessionStorage); } catch (e) {}
+            return stores;
+        }
+
+        function getStoredItem(key) {
+            for (const store of getStorageCandidates()) {
+                try {
+                    const value = store.getItem(key);
+                    if (value !== null) return value;
+                } catch (e) {}
+            }
+            return getWindowNameItem(key);
+        }
+
+        function setStoredItem(key, value) {
+            getStorageCandidates().forEach(store => {
+                try { store.setItem(key, value); } catch (e) {}
+            });
+            setWindowNameItem(key, value);
+        }
+
+        function removeStoredItem(key) {
+            getStorageCandidates().forEach(store => {
+                try { store.removeItem(key); } catch (e) {}
+            });
+            removeWindowNameItem(key);
+        }
+
+        function safeJsonParse(value, fallback) {
+            if (!value) return fallback;
+            try {
+                return JSON.parse(value);
+            } catch (e) {
+                return fallback;
+            }
+        }
+
+        function getUsers() {
+            const users = safeJsonParse(getStoredItem('users'), []);
+            return Array.isArray(users) ? users : [];
+        }
+
+        function getDashboards() {
+            const output = {};
+            getStorageCandidates().forEach(store => {
+                let storedDashboards = null;
+                let fallback = null;
+                try {
+                    storedDashboards = safeJsonParse(store.getItem('dashboards'), null);
+                    fallback = safeJsonParse(store.getItem('dojoData'), null);
+                } catch (error) {}
+
+                if (storedDashboards && typeof storedDashboards === 'object' && !Array.isArray(storedDashboards)) {
+                    Object.entries(storedDashboards).forEach(([name, profile]) => {
+                        if (profile && typeof profile === 'object') {
+                            const profileName = profile.name || name;
+                            output[profileName] = { ...profile, name: profileName };
+                        }
+                    });
+                }
+
+                if (fallback && typeof fallback === 'object') {
+                    const fallbackName = fallback.name || 'Default Profile';
+                    output[fallbackName] = { ...fallback, name: fallbackName };
+                }
+            });
+            return output;
+        }
+
+        function setDashboards(value) {
+            setStoredItem('dashboards', JSON.stringify(value));
+        }
+
+        function ensureDefaultAdminUser() {
+            const users = getUsers();
+            const hasAdmin = users.some(user => (user.role || '').toLowerCase() === 'admin' && user.name === DEFAULT_ADMIN_USER.name);
+            if (!hasAdmin) {
+                users.unshift(DEFAULT_ADMIN_USER);
+                setStoredItem('users', JSON.stringify(users));
+            }
+        }
+
+        function requireAdminAccess() {
+            const currentUser = safeJsonParse(getStoredItem('currentUser'), null);
+            const role = currentUser && currentUser.role ? currentUser.role.toLowerCase() : '';
+            if (role !== 'admin' && role !== 'coach') {
+                window.location.href = 'login.html';
+                return null;
+            }
+            return currentUser;
+        }
+
+        function safeFieldValue(value) {
+            return value === undefined || value === null ? '' : value;
+        }
+
+        function normalizePhotoPath(value) {
+            if (!value || value === 'PHOTO-2026-05-17-10-27-52.jpg') {
+                return 'dashboard-athlete-reference.png';
+            }
+            return value;
+        }
+
+        function parseCommaList(value) {
+            return value.split(/,\s*/).map(item => item.trim()).filter(Boolean);
+        }
+
+        function parseUsersFromText() {
+            return document.getElementById('users').value.trim().split('\n').filter(Boolean).map(line => {
+                const parts = line.split(':');
+                const user = {
+                    name: (parts[0] || '').trim(),
+                    password: (parts[1] || '').trim()
+                };
+                if ((parts[2] || '').trim()) user.role = (parts[2] || '').trim();
+                if ((parts[3] || '').trim()) user.childName = (parts[3] || '').trim();
+                return user;
+            }).filter(user => user.name && user.password);
+        }
+
+        function formatUserLines(users) {
+            return users.map(user => [user.name || '', user.password || '', user.role || '', user.childName || ''].filter((value, index) => value || index < 2).join(':')).join('\n');
+        }
+
+        function parseMetricObject(text) {
+            const output = {};
+            text.trim().split('\n').filter(Boolean).forEach(line => {
+                const [metric, value] = line.split(':');
+                if (metric) output[metric.trim()] = (value || '').trim();
+            });
+            return output;
+        }
+
+        function parseReadinessMetrics(text) {
+            return text.trim().split('\n').filter(Boolean).map(line => {
+                const parts = line.split(':');
+                return {
+                    label: (parts[0] || '').trim(),
+                    value: parseInt(parts[1], 10) || 0,
+                    icon: (parts.slice(2).join(':') || '').trim() || 'fa-solid fa-star'
+                };
+            }).filter(item => item.label);
+        }
+
+        function parseActivitySummary(text) {
+            return text.trim().split('\n').filter(Boolean).map(line => {
+                const parts = line.split('|');
+                return {
+                    title: (parts[0] || '').trim(),
+                    value: (parts[1] || '').trim(),
+                    percent: parseInt(parts[2], 10) || 0,
+                    status: (parts[3] || '').trim() || 'ATTENDED',
+                    icon: (parts[4] || '').trim() || 'fa-solid fa-chart-line'
+                };
+            }).filter(item => item.title);
+        }
+
+        function parseFeedback(text) {
+            return text.trim().split('\n').filter(Boolean).map(line => {
+                const parts = line.split('|');
+                return {
+                    name: (parts[0] || '').trim(),
+                    comment: (parts[1] || '').trim(),
+                    color: (parts[2] || '').trim() || 'gold'
+                };
+            }).filter(item => item.name || item.comment);
+        }
+
+        function makeField(label, className, input) {
+            const wrapper = document.createElement('div');
+            if (className) wrapper.className = className;
+            const fieldLabel = document.createElement('label');
+            fieldLabel.textContent = label;
+            wrapper.appendChild(fieldLabel);
+            wrapper.appendChild(input);
+            return wrapper;
+        }
+
+        function createTextInput(value, placeholder) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = value || '';
+            input.placeholder = placeholder || '';
+            return input;
+        }
+
+        function createNumberInput(value, placeholder) {
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.value = value === undefined || value === null ? '' : value;
+            input.placeholder = placeholder || '';
+            return input;
+        }
+
+        function createSidebarTabRow(data) {
+            const list = document.getElementById('sidebar-tabs-builder');
+            const row = document.createElement('div');
+            row.className = 'builder-row builder-row--four';
+
+            const labelInput = createTextInput(data && data.label, 'Homepage');
+            labelInput.setAttribute('data-sidebar-label', 'true');
+            const hrefInput = createTextInput(data && data.href, 'index.html');
+            hrefInput.setAttribute('data-sidebar-href', 'true');
+            const iconInput = createTextInput(data && data.icon, 'fa-solid fa-house');
+            iconInput.setAttribute('data-sidebar-icon', 'true');
+
+            [labelInput, hrefInput, iconInput].forEach(input => input.addEventListener('input', syncSidebarTabsRaw));
+
+            row.appendChild(makeField('Label', '', labelInput));
+            row.appendChild(makeField('Link', '', hrefInput));
+            row.appendChild(makeField('Icon Class', '', iconInput));
+            row.appendChild(addRemoveButton(row, syncSidebarTabsRaw));
+            list.appendChild(row);
+            syncSidebarTabsRaw();
+        }
+
+        function syncSidebarTabsRaw() {
+            const rows = Array.from(document.querySelectorAll('#sidebar-tabs-builder .builder-row'));
+            const output = rows.map(row => {
+                const label = row.querySelector('[data-sidebar-label]').value.trim();
+                const href = row.querySelector('[data-sidebar-href]').value.trim();
+                const icon = row.querySelector('[data-sidebar-icon]').value.trim();
+                return `${label},${href},${icon}`;
+            }).filter(line => line.split(',')[0] || line.split(',')[1]);
+            document.getElementById('sidebarTabs').value = output.join('\n');
+            updateLivePreview();
+        }
+
+        function initSidebarTabsEditor(siteData) {
+            const tabs = (siteData && siteData.sidebarTabs && Array.isArray(siteData.sidebarTabs)) ? siteData.sidebarTabs : [
+                { label: 'Homepage', href: 'index.html', icon: 'fa-solid fa-house' },
+                { label: 'Dashboard', href: 'dashboard.html', icon: 'fa-solid fa-house' },
+                { label: 'Profile', href: 'profile.html', icon: 'fa-regular fa-user' },
+                { label: 'Training Tracker', href: 'training-tracker.html', icon: 'fa-regular fa-calendar-check' },
+                { label: 'Fitness Testing', href: 'fitness-testing.html', icon: 'fa-solid fa-crosshairs' },
+                { label: 'Mental Performance', href: 'mental-performance.html', icon: 'fa-solid fa-shield-heart' },
+                { label: 'At-Home Program', href: 'at-home-program.html', icon: 'fa-solid fa-box-open' },
+                { label: 'Video Logs', href: 'video-logs.html', icon: 'fa-regular fa-circle-play' },
+                { label: 'Tournament Prep', href: 'tournament-prep.html', icon: 'fa-solid fa-trophy' },
+                { label: 'Winter Camp', href: 'winter-camp.html', icon: 'fa-solid fa-campground' },
+                { label: 'Coach Feedback', href: 'coach-feedback.html', icon: 'fa-solid fa-comment-dots' }
+            ];
+            renderBuilder('sidebar-tabs-builder', tabs, createSidebarTabRow);
+            document.getElementById('sidebarTabs').value = formatSidebarTabsValue(tabs);
+            const addButton = document.getElementById('add-sidebar-tab-row');
+            if (addButton) {
+                addButton.addEventListener('click', () => addSidebarTabRow());
+            }
+        }
+
+        function addSidebarTabRow(data) {
+            createSidebarTabRow(data);
+        }
+
+        function getHomepageSiteData() {
+            const storedSite = safeJsonParse(getStoredItem('siteData'), null);
+            if (typeof window.mergeSiteData === 'function') {
+                return window.mergeSiteData(storedSite);
+            }
+            return storedSite || window.defaultSiteData || {};
+        }
+
+        function getPathValue(source, path) {
+            return path.split('.').reduce((value, key) => {
+                if (value === undefined || value === null) return undefined;
+                return value[key];
+            }, source);
+        }
+
+        function setPathValue(target, path, value) {
+            const parts = path.split('.');
+            let cursor = target;
+            parts.forEach((part, index) => {
+                const isLast = index === parts.length - 1;
+                const nextPart = parts[index + 1];
+                const shouldBeArray = nextPart !== undefined && /^\d+$/.test(nextPart);
+
+                if (isLast) {
+                    cursor[part] = value;
+                    return;
+                }
+
+                if (cursor[part] === undefined || cursor[part] === null) {
+                    cursor[part] = shouldBeArray ? [] : {};
+                }
+                cursor = cursor[part];
+            });
+        }
+
+        function formatSidebarTabsValue(value) {
+            if (!Array.isArray(value)) return '';
+            return value.map(item => [item.label || '', item.href || '', item.icon || ''].join(',')).join('\n');
+        }
+
+        function formatHomepageValue(value, type) {
+            if (type === 'lines') return Array.isArray(value) ? value.join('\n') : '';
+            if (type === 'sidebarTabs') return formatSidebarTabsValue(value);
+            if (Array.isArray(value)) return value.join('\n');
+            if (type === 'plainHtml') {
+                const temporary = document.createElement('div');
+                temporary.innerHTML = value === undefined || value === null ? '' : String(value);
+                return temporary.textContent || temporary.innerText || '';
+            }
+            return value === undefined || value === null ? '' : String(value);
+        }
+
+        function parseSidebarTabs(value) {
+            return value.trim().split('\n').filter(Boolean).map(line => {
+                const parts = line.split(',');
+                const label = (parts[0] || '').trim();
+                const href = (parts[1] || '').trim();
+                const icon = (parts.slice(2).join(',') || '').trim() || 'fa-solid fa-circle';
+                return { label, href: href || '#', icon };
+            });
+        }
+
+        function parseHomepageValue(value, type) {
+            if (type === 'lines') {
+                return value.split('\n').map(item => item.trim()).filter(Boolean);
+            }
+            if (type === 'sidebarTabs') {
+                return parseSidebarTabs(value);
+            }
+            return value.trim();
+        }
+
+        function optimizeHomepageImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const image = new Image();
+                    image.onload = () => {
+                        const maxWidth = 1600;
+                        const maxHeight = 1000;
+                        const scale = Math.min(1, maxWidth / image.width, maxHeight / image.height);
+                        const width = Math.max(1, Math.round(image.width * scale));
+                        const height = Math.max(1, Math.round(image.height * scale));
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const context = canvas.getContext('2d');
+                        context.drawImage(image, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.84));
+                    };
+                    image.onerror = reject;
+                    image.src = reader.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function createHomepageImageField(field, value, index) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'homepage-image-field';
+
+            const label = document.createElement('div');
+            label.className = 'homepage-image-field__label';
+            label.textContent = field.label;
+
+            const uploader = document.createElement('div');
+            uploader.className = 'homepage-image-uploader';
+
+            const preview = document.createElement('img');
+            preview.className = 'homepage-image-preview';
+            preview.alt = `${field.label} preview`;
+            preview.src = value || 'homepage-stock__hero-main.jpg';
+
+            const controls = document.createElement('div');
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.id = `homepage-image-${index}`;
+
+            const hiddenValue = document.createElement('input');
+            hiddenValue.type = 'hidden';
+            hiddenValue.dataset.homepagePath = field.path;
+            hiddenValue.dataset.homepageType = 'image';
+            hiddenValue.value = value || '';
+
+            const hint = document.createElement('small');
+            hint.textContent = 'Choose a JPG, PNG, or WebP image from your computer. The website will save an optimized copy automatically.';
+
+            fileInput.addEventListener('change', async () => {
+                const file = fileInput.files && fileInput.files[0];
+                if (!file) return;
+                try {
+                    const optimizedImage = await optimizeHomepageImage(file);
+                    hiddenValue.value = optimizedImage;
+                    preview.src = optimizedImage;
+                    syncHomepageEditorToJson();
+                    scheduleAutosave();
+                    setSaveStatus('Image added. Remember to save changes.', false, true);
+                } catch (error) {
+                    setSaveStatus('This image could not be loaded. Please try another image.', true, false);
+                }
+            });
+
+            controls.appendChild(fileInput);
+            controls.appendChild(hiddenValue);
+            controls.appendChild(hint);
+            uploader.appendChild(preview);
+            uploader.appendChild(controls);
+            wrapper.appendChild(label);
+            wrapper.appendChild(uploader);
+            return wrapper;
+        }
+
+        function buildHomepageEditorFields(siteData) {
+            const host = document.getElementById('homepage-editor-fields');
+            if (!host || host.children.length) return;
+
+            let fieldIndex = 0;
+            HOMEPAGE_EDITOR_SECTIONS.forEach(section => {
+                const sectionCard = document.createElement('section');
+                sectionCard.className = 'homepage-simple-section';
+
+                const heading = document.createElement('div');
+                heading.className = 'homepage-editor-section';
+                heading.textContent = section.title;
+                sectionCard.appendChild(heading);
+
+                if (section.hint) {
+                    const hint = document.createElement('p');
+                    hint.className = 'homepage-simple-section__hint';
+                    hint.textContent = section.hint;
+                    sectionCard.appendChild(hint);
+                }
+
+                const grid = document.createElement('div');
+                grid.className = 'homepage-editor-grid';
+                section.fields.forEach(field => {
+                    const currentValue = formatHomepageValue(getPathValue(siteData, field.path), field.type);
+                    if (field.type === 'image') {
+                        grid.appendChild(createHomepageImageField(field, currentValue, fieldIndex));
+                        fieldIndex += 1;
+                        return;
+                    }
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = `homepage-field${field.wide ? ' homepage-field--wide' : ''}`;
+                    const id = `homepage-field-${fieldIndex}`;
+                    const label = document.createElement('label');
+                    label.setAttribute('for', id);
+                    label.textContent = field.label;
+
+                    const input = field.type === 'textarea' || field.type === 'lines'
+                        ? document.createElement('textarea')
+                        : document.createElement('input');
+                    if (input.tagName === 'INPUT') input.type = 'text';
+                    input.id = id;
+                    input.dataset.homepagePath = field.path;
+                    input.dataset.homepageType = field.type || 'text';
+                    input.value = currentValue;
+                    input.placeholder = field.type === 'lines' ? 'Add one item or paragraph per line' : '';
+
+                    wrapper.appendChild(label);
+                    wrapper.appendChild(input);
+                    grid.appendChild(wrapper);
+                    fieldIndex += 1;
+                });
+
+                sectionCard.appendChild(grid);
+                host.appendChild(sectionCard);
+            });
+
+            initSidebarTabsEditor(siteData);
+        }
+
+        function collectHomepageEditorData() {
+            const siteData = getHomepageSiteData();
+            document.querySelectorAll('[data-homepage-path]').forEach(field => {
+                setPathValue(
+                    siteData,
+                    field.dataset.homepagePath,
+                    parseHomepageValue(field.value, field.dataset.homepageType)
+                );
+            });
+            siteData.schemaVersion = (window.defaultSiteData && window.defaultSiteData.schemaVersion) || siteData.schemaVersion || 'combined-home-v5';
+            return siteData;
+        }
+
+        function syncHomepageEditorToJson() {
+            const siteDataField = document.getElementById('siteData');
+            if (!siteDataField) return;
+            const siteData = collectHomepageEditorData();
+            siteDataField.value = JSON.stringify(siteData, null, 2);
+        }
+
+        function createSliderControl(value, options) {
+            const settings = options || {};
+            const wrapper = document.createElement('div');
+            wrapper.className = 'slider-field';
+
+            const range = document.createElement('input');
+            range.type = 'range';
+            range.min = settings.min || 0;
+            range.max = settings.max || 100;
+            range.step = settings.step || 1;
+            range.value = value === undefined || value === null || value === '' ? (settings.min || 0) : value;
+
+            const number = document.createElement('input');
+            number.type = 'number';
+            number.min = settings.min || 0;
+            number.max = settings.max || 100;
+            number.step = settings.step || 1;
+            number.value = range.value;
+            number.style.minHeight = '42px';
+
+            const sync = () => {
+                const normalized = Math.max(Number(number.min), Math.min(Number(number.max), Number(number.value || range.value || 0)));
+                range.value = normalized;
+                number.value = normalized;
+                if (typeof settings.onChange === 'function') settings.onChange();
+            };
+
+            range.addEventListener('input', () => {
+                number.value = range.value;
+                if (typeof settings.onChange === 'function') settings.onChange();
+            });
+            number.addEventListener('input', sync);
+
+            if (settings.rangeAttr) range.setAttribute(settings.rangeAttr, 'true');
+            if (settings.numberAttr) number.setAttribute(settings.numberAttr, 'true');
+
+            wrapper.appendChild(range);
+            wrapper.appendChild(number);
+            return { wrapper, range, number };
+        }
+
+        function createTextareaInput(value, placeholder) {
+            const input = document.createElement('textarea');
+            input.value = value || '';
+            input.placeholder = placeholder || '';
+            return input;
+        }
+
+        function createSelectInput(value, options) {
+            const select = document.createElement('select');
+            options.forEach(optionValue => {
+                const option = document.createElement('option');
+                option.value = optionValue;
+                option.textContent = optionValue;
+                if (optionValue === value) option.selected = true;
+                select.appendChild(option);
+            });
+            return select;
+        }
+
+        function createListRow(value, placeholder, attrName, onChange) {
+            const row = document.createElement('div');
+            row.className = 'list-builder__row';
+            const input = createTextInput(value, placeholder);
+            input.setAttribute(attrName, 'true');
+            input.addEventListener('input', onChange);
+            row.appendChild(input);
+            row.appendChild(addRemoveButton(row, onChange));
+            return row;
+        }
+
+        function addRemoveButton(row, onChange) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'builder-remove';
+            button.innerHTML = '&times;';
+            button.addEventListener('click', () => {
+                row.remove();
+                onChange();
+            });
+            return button;
+        }
+
+        function syncReadinessRaw() {
+            const rows = Array.from(document.querySelectorAll('#readiness-builder .builder-row'));
+            const output = rows.map(row => {
+                const label = row.querySelector('[data-readiness-label]');
+                const value = row.querySelector('[data-readiness-score]');
+                const icon = row.querySelector('[data-readiness-icon]');
+                return `${label.value.trim()}:${value.value.trim()}:${icon.value.trim()}`;
+            }).filter(line => line.split(':')[0]);
+            document.getElementById('bars').value = output.join('\n');
+            updateLivePreview();
+        }
+
+        function syncActivityRaw() {
+            const rows = Array.from(document.querySelectorAll('#activity-builder .builder-row'));
+            const output = rows.map(row => {
+                const title = row.querySelector('[data-activity-title]');
+                const value = row.querySelector('[data-activity-value]');
+                const percent = row.querySelector('[data-activity-percent]');
+                const status = row.querySelector('[data-activity-status]');
+                const icon = row.querySelector('[data-activity-icon]');
+                return `${title.value.trim()}|${value.value.trim()}|${percent.value.trim()}|${status.value.trim()}|${icon.value.trim()}`;
+            }).filter(line => line.split('|')[0]);
+            document.getElementById('activitySummary').value = output.join('\n');
+            updateLivePreview();
+        }
+
+        function syncEventsRaw() {
+            const rows = Array.from(document.querySelectorAll('#events-builder .builder-row'));
+            const output = rows.map(row => {
+                const inputs = row.querySelectorAll('input');
+                return `${inputs[0].value.trim()},${inputs[1].value.trim()},${inputs[2].value.trim()}`;
+            }).filter(line => line.split(',')[0] || line.split(',')[1]);
+            document.getElementById('events').value = output.join('\n');
+            updateLivePreview();
+        }
+
+        function syncFeedbackRaw() {
+            const rows = Array.from(document.querySelectorAll('#feedback-builder .builder-row'));
+            const output = rows.map(row => {
+                const name = row.querySelector('input').value.trim();
+                const comment = row.querySelector('textarea').value.trim();
+                const color = row.querySelector('select').value.trim();
+                return `${name}|${comment}|${color}`;
+            }).filter(line => line.split('|')[0] || line.split('|')[1]);
+            document.getElementById('feedback').value = output.join('\n');
+            updateLivePreview();
+        }
+
+        function syncSimpleListRaw(builderSelector, attrSelector, targetId) {
+            const rows = Array.from(document.querySelectorAll(`${builderSelector} .list-builder__row`));
+            const output = rows.map(row => {
+                const input = row.querySelector(`[${attrSelector}]`);
+                return input ? input.value.trim() : '';
+            }).filter(Boolean);
+            document.getElementById(targetId).value = output.join(', ');
+            updateLivePreview();
+        }
+
+        function syncLineListRaw(builderSelector, attrSelector, targetId) {
+            const rows = Array.from(document.querySelectorAll(`${builderSelector} .list-builder__row`));
+            const output = rows.map(row => {
+                const input = row.querySelector(`[${attrSelector}]`);
+                return input ? input.value.trim() : '';
+            }).filter(Boolean);
+            document.getElementById(targetId).value = output.join('\n');
+            updateLivePreview();
+        }
+
+        function syncAttendanceRaw() {
+            const rows = Array.from(document.querySelectorAll('#attendance-builder .builder-row'));
+            const output = rows.map(row => {
+                const date = row.querySelector('[data-attendance-date]');
+                const status = row.querySelector('[data-attendance-status]');
+                const note = row.querySelector('[data-attendance-note]');
+                const parts = [date.value.trim(), status.value.trim()];
+                if (note.value.trim()) parts.push(note.value.trim());
+                return parts.join(' - ');
+            }).filter(Boolean);
+            document.getElementById('attendance').value = output.join('\n');
+            updateLivePreview();
+        }
+
+        function syncVideoRaw() {
+            const rows = Array.from(document.querySelectorAll('#video-builder .builder-row'));
+            const output = rows.map(row => {
+                const title = row.querySelector('[data-video-title]');
+                const url = row.querySelector('[data-video-url]');
+                return `${title.value.trim()},${url.value.trim()}`;
+            }).filter(line => line.split(',')[0] || line.split(',')[1]);
+            document.getElementById('videoLogs').value = output.join('\n');
+            updateLivePreview();
+        }
+
+        function addReadinessRow(data) {
+            const list = document.getElementById('readiness-builder');
+            const row = document.createElement('div');
+            row.className = 'builder-row builder-row--three';
+            const labelInput = createTextInput(data && data.label, 'Technical Skills');
+            labelInput.setAttribute('data-readiness-label', 'true');
+            const valueInput = createSliderControl(data && data.value, {
+                min: 0,
+                max: 100,
+                onChange: syncReadinessRaw,
+                numberAttr: 'data-readiness-score'
+            });
+            const iconInput = createTextInput(data && data.icon, 'fa-solid fa-trophy');
+            iconInput.setAttribute('data-readiness-icon', 'true');
+            [labelInput, iconInput].forEach(input => input.addEventListener('input', syncReadinessRaw));
+            row.appendChild(makeField('Label', '', labelInput));
+            row.appendChild(makeField('Score', '', valueInput.wrapper));
+            row.appendChild(makeField('Icon Class', '', iconInput));
+            row.appendChild(addRemoveButton(row, syncReadinessRaw));
+            list.appendChild(row);
+            syncReadinessRaw();
+        }
+
+        function addActivityRow(data) {
+            const list = document.getElementById('activity-builder');
+            const row = document.createElement('div');
+            row.className = 'builder-row builder-row--five';
+            const title = createTextInput(data && data.title, 'Group Sessions');
+            title.setAttribute('data-activity-title', 'true');
+            const value = createTextInput(data && data.value, '12/14');
+            value.setAttribute('data-activity-value', 'true');
+            const percent = createSliderControl(data && data.percent, {
+                min: 0,
+                max: 100,
+                onChange: syncActivityRaw,
+                numberAttr: 'data-activity-percent'
+            });
+            const status = createTextInput(data && data.status, 'ATTENDED');
+            status.setAttribute('data-activity-status', 'true');
+            const icon = createTextInput(data && data.icon, 'fa-solid fa-people-group');
+            icon.setAttribute('data-activity-icon', 'true');
+            [title, value, status, icon].forEach(input => input.addEventListener('input', syncActivityRaw));
+            row.appendChild(makeField('Title', '', title));
+            row.appendChild(makeField('Value', '', value));
+            row.appendChild(makeField('Percent', '', percent.wrapper));
+            row.appendChild(makeField('Status', '', status));
+            row.appendChild(makeField('Icon Class', '', icon));
+            row.appendChild(addRemoveButton(row, syncActivityRaw));
+            list.appendChild(row);
+            syncActivityRaw();
+        }
+
+        function addEventRow(data) {
+            const list = document.getElementById('events-builder');
+            const row = document.createElement('div');
+            row.className = 'builder-row builder-row--three';
+            const fields = [
+                createTextInput(data && data.date, '10 May 2025'),
+                createTextInput(data && data.name, 'Dolphin League'),
+                createTextInput(data && data.location, 'Dojo Main Hall')
+            ];
+            fields.forEach(input => input.addEventListener('input', syncEventsRaw));
+            row.appendChild(makeField('Date', '', fields[0]));
+            row.appendChild(makeField('Event Name', '', fields[1]));
+            row.appendChild(makeField('Location', '', fields[2]));
+            row.appendChild(addRemoveButton(row, syncEventsRaw));
+            list.appendChild(row);
+            syncEventsRaw();
+        }
+
+        function addFeedbackRow(data) {
+            const list = document.getElementById('feedback-builder');
+            const row = document.createElement('div');
+            row.className = 'builder-row builder-row--three';
+            const nameInput = createTextInput(data && data.name, 'Group Training');
+            const commentInput = createTextareaInput(data && data.comment, 'Feedback note');
+            const colorSelect = createSelectInput((data && data.color) || 'gold', ['gold', 'green', 'blue', 'purple']);
+            [nameInput, commentInput, colorSelect].forEach(input => input.addEventListener('input', syncFeedbackRaw));
+            colorSelect.addEventListener('change', syncFeedbackRaw);
+            row.appendChild(makeField('Source', '', nameInput));
+            row.appendChild(makeField('Comment', '', commentInput));
+            row.appendChild(makeField('Color', '', colorSelect));
+            row.appendChild(addRemoveButton(row, syncFeedbackRaw));
+            list.appendChild(row);
+            syncFeedbackRaw();
+        }
+
+        function renderBuilder(listId, items, addFn) {
+            const list = document.getElementById(listId);
+            list.innerHTML = '';
+            (items || []).forEach(item => addFn(item));
+        }
+
+        function addStrengthRow(value) {
+            const list = document.getElementById('strengths-builder');
+            const row = createListRow(value, 'Strong kata basics', 'data-strength-item', () => syncSimpleListRaw('#strengths-builder', 'data-strength-item', 'strengths'));
+            list.appendChild(row);
+            syncSimpleListRaw('#strengths-builder', 'data-strength-item', 'strengths');
+        }
+
+        function addWeaknessRow(value) {
+            const list = document.getElementById('weaknesses-builder');
+            const row = createListRow(value, 'Kumite aggression', 'data-weakness-item', () => syncSimpleListRaw('#weaknesses-builder', 'data-weakness-item', 'weaknesses'));
+            list.appendChild(row);
+            syncSimpleListRaw('#weaknesses-builder', 'data-weakness-item', 'weaknesses');
+        }
+
+        function addGoalRow(value) {
+            const list = document.getElementById('goals-builder');
+            const row = createListRow(value, 'Become a World Champion', 'data-goal-item', () => syncSimpleListRaw('#goals-builder', 'data-goal-item', 'goals'));
+            list.appendChild(row);
+            syncSimpleListRaw('#goals-builder', 'data-goal-item', 'goals');
+        }
+
+        function addPrepRow(value) {
+            const list = document.getElementById('prep-builder');
+            const row = createListRow(value, 'Registered for Dolphin League', 'data-prep-item', () => syncLineListRaw('#prep-builder', 'data-prep-item', 'tournamentPrep'));
+            list.appendChild(row);
+            syncLineListRaw('#prep-builder', 'data-prep-item', 'tournamentPrep');
+        }
+
+        function addAttendanceRow(data) {
+            const list = document.getElementById('attendance-builder');
+            const row = document.createElement('div');
+            row.className = 'builder-row builder-row--three';
+            const dateInput = createTextInput(data && data.date, '2026-05-01');
+            const statusSelect = createSelectInput((data && data.status) || 'Present', ['Present', 'Absent', 'Late', 'Excused']);
+            const noteInput = createTextInput(data && data.note, 'Optional note');
+            dateInput.setAttribute('data-attendance-date', 'true');
+            statusSelect.setAttribute('data-attendance-status', 'true');
+            noteInput.setAttribute('data-attendance-note', 'true');
+            [dateInput, statusSelect, noteInput].forEach(input => input.addEventListener('input', syncAttendanceRaw));
+            statusSelect.addEventListener('change', syncAttendanceRaw);
+            row.appendChild(makeField('Date', '', dateInput));
+            row.appendChild(makeField('Status', '', statusSelect));
+            row.appendChild(makeField('Note', '', noteInput));
+            row.appendChild(addRemoveButton(row, syncAttendanceRaw));
+            list.appendChild(row);
+            syncAttendanceRaw();
+        }
+
+        function addVideoRow(data) {
+            const list = document.getElementById('video-builder');
+            const row = document.createElement('div');
+            row.className = 'builder-row builder-row--four';
+            const titleInput = createTextInput(data && data.title, 'Kumite Sparring Review');
+            const urlInput = createTextInput(data && data.url, '/path/to/video.mp4 or https://...');
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'video/*';
+            fileInput.className = 'video-upload-input';
+            fileInput.setAttribute('data-video-file', 'true');
+            titleInput.setAttribute('data-video-title', 'true');
+            urlInput.setAttribute('data-video-url', 'true');
+            [titleInput, urlInput].forEach(input => input.addEventListener('input', syncVideoRaw));
+            fileInput.addEventListener('change', async () => {
+                const file = fileInput.files && fileInput.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    urlInput.value = reader.result;
+                    syncVideoRaw();
+                };
+                reader.readAsDataURL(file);
+            });
+            row.appendChild(makeField('Video Title', '', titleInput));
+            row.appendChild(makeField('File Path or URL', '', urlInput));
+            row.appendChild(makeField('Upload File', '', fileInput));
+            row.appendChild(addRemoveButton(row, syncVideoRaw));
+            list.appendChild(row);
+            syncVideoRaw();
+        }
+
+        function updateChildListUI() {
+            const childCount = document.getElementById('child-count');
+            const selectedProfileLabel = document.getElementById('selected-profile-label');
+            const profileSelect = document.getElementById('profile-select');
+            const names = Object.keys(dashboards).sort();
+            if (childCount) {
+                childCount.textContent = `${names.length} ${names.length === 1 ? 'profile' : 'profiles'}`;
+            }
+            if (selectedProfileLabel) {
+                selectedProfileLabel.textContent = selectedChildName || 'No profile selected';
+            }
+            if (profileSelect) {
+                profileSelect.innerHTML = '';
+                const emptyOption = document.createElement('option');
+                emptyOption.value = '';
+                emptyOption.textContent = names.length ? 'Choose a child profile...' : 'No profiles saved yet';
+                profileSelect.appendChild(emptyOption);
+                names.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    option.selected = name === selectedChildName;
+                    profileSelect.appendChild(option);
+                });
+                profileSelect.disabled = !names.length;
+                if (selectedChildName) profileSelect.value = selectedChildName;
+            }
+            updateDeleteProfileVisibility();
+        }
+
+        function setSaveStatus(message, isError, isPending) {
+            const status = document.getElementById('save-status');
+            status.textContent = message || '';
+            status.classList.toggle('is-error', !!isError);
+            status.classList.toggle('is-pending', !!isPending && !isError);
+        }
+
+        function setLastSavedLabel(date) {
+            const label = document.getElementById('last-saved');
+            if (!date) {
+                label.textContent = 'Not saved yet';
+                return;
+            }
+            label.textContent = `Last saved ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+        }
+
+        function getLinkedUsersForProfile(profileName) {
+            const users = getUsers();
+            return {
+                athlete: users.find(user => (user.role || '').toLowerCase() === 'athlete' && (user.childName || user.name) === profileName) || null,
+                parent: users.find(user => (user.role || '').toLowerCase() === 'parent' && user.childName === profileName) || null
+            };
+        }
+
+        function updateLivePreview() {
+            const name = document.getElementById('name').value.trim() || 'New Athlete';
+            const photo = normalizePhotoPath(document.getElementById('photo').value.trim());
+            const age = document.getElementById('age').value.trim();
+            const division = document.getElementById('division').value.trim() || 'Not set';
+            const events = document.getElementById('eventType').value.trim() || 'Not set';
+            const belt = document.getElementById('belt').value.trim() || 'Not set';
+            const coach = document.getElementById('coachName').value.trim() || 'Not set';
+            const readiness = document.getElementById('readiness').value || '0';
+
+            document.getElementById('preview-name').textContent = name;
+            document.getElementById('preview-age').textContent = age ? `${age} years old` : 'Ready to build';
+            document.getElementById('preview-photo').src = photo;
+            document.getElementById('preview-division').textContent = division;
+            document.getElementById('preview-events').textContent = events;
+            document.getElementById('preview-belt').textContent = belt;
+            document.getElementById('preview-coach').textContent = coach;
+            document.getElementById('preview-readiness').textContent = `${readiness}%`;
+            document.getElementById('readiness-pill').textContent = `${readiness}%`;
+            document.getElementById('preview-readiness-ring').style.background = `conic-gradient(#d1a132 0% ${readiness}%, #2c2c2c ${readiness}% 100%)`;
+
+            updateDashboardMiniPreview();
+        }
+
+        function renderMiniList(targetId, items, emptyMessage) {
+            const list = document.getElementById(targetId);
+            list.innerHTML = '';
+            if (!items.length) {
+                list.innerHTML = `<li class="mini-empty">${emptyMessage}</li>`;
+                return;
+            }
+            items.slice(0, 4).forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                list.appendChild(li);
+            });
+        }
+
+        function updateDashboardMiniPreview() {
+            const strengths = parseCommaList(document.getElementById('strengths').value.trim());
+            const weaknesses = parseCommaList(document.getElementById('weaknesses').value.trim());
+            const activity = parseActivitySummary(document.getElementById('activitySummary').value);
+            const events = document.getElementById('events').value.trim().split('\n').filter(Boolean).map(line => {
+                const parts = line.split(',');
+                return { date: (parts[0] || '').trim(), name: (parts[1] || '').trim(), location: (parts[2] || '').trim() };
+            });
+            const feedback = parseFeedback(document.getElementById('feedback').value);
+            const coachNote = document.getElementById('coachNote').value.trim();
+
+            renderMiniList('preview-strengths', strengths, 'Add strengths to see the athlete advantage snapshot.');
+            renderMiniList('preview-weaknesses', weaknesses, 'Add development areas to shape the next training phase.');
+
+            const activityHost = document.getElementById('preview-activity');
+            activityHost.innerHTML = '';
+            if (!activity.length) {
+                activityHost.innerHTML = '<p class="mini-empty">Activity cards will appear here as soon as you add attendance and progress numbers.</p>';
+            } else {
+                activity.slice(0, 4).forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'mini-activity-card';
+                    card.innerHTML = `
+                        <div class="mini-activity-card__label">${item.title || 'Activity'}</div>
+                        <div class="mini-activity-card__value">${item.value || '0/0'}</div>
+                        <div class="mini-activity-card__meta">
+                            <span class="mini-activity-card__status">${item.status || 'Tracking'}</span>
+                            <span class="mini-activity-card__percent">${item.percent || 0}%</span>
+                        </div>
+                        <div class="mini-progress"><span style="width:${Math.max(0, Math.min(100, Number(item.percent) || 0))}%"></span></div>
+                    `;
+                    activityHost.appendChild(card);
+                });
+            }
+
+            const eventsHost = document.getElementById('preview-events-list');
+            eventsHost.innerHTML = '';
+            if (!events.length) {
+                eventsHost.innerHTML = '<p class="mini-empty">Upcoming events will preview here so you can quickly check the child schedule.</p>';
+            } else {
+                events.slice(0, 3).forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'mini-row';
+                    row.innerHTML = `
+                        <strong>${item.name || 'Upcoming Event'}</strong>
+                        <span>${item.date || 'Date not set'}</span>
+                        <span>${item.location || 'Location not set'}</span>
+                    `;
+                    eventsHost.appendChild(row);
+                });
+            }
+
+            const feedbackHost = document.getElementById('preview-feedback-list');
+            feedbackHost.innerHTML = '';
+            if (!feedback.length) {
+                feedbackHost.innerHTML = '<p class="mini-empty">Latest coach feedback items will appear here while you build the report.</p>';
+            } else {
+                feedback.slice(0, 2).forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'mini-row';
+                    row.innerHTML = `
+                        <strong>${item.name || 'Feedback'}</strong>
+                        <p>${item.comment || 'Add a feedback note.'}</p>
+                    `;
+                    feedbackHost.appendChild(row);
+                });
+            }
+
+            document.getElementById('preview-coach-note').textContent = coachNote || 'Coach note preview will appear here as you write the athlete report.';
+        }
+
+        function setPreviewMode(mode) {
+            const normalized = mode === 'report' ? 'report' : mode === 'performance' ? 'performance' : 'profile';
+            const modeLabel = document.getElementById('preview-mode-label');
+            if (modeLabel) {
+                modeLabel.textContent = normalized === 'report'
+                    ? 'Coach Report Mode'
+                    : normalized === 'performance'
+                        ? 'Performance Mode'
+                        : 'Profile Mode';
+            }
+
+            document.querySelectorAll('.preview-section').forEach(section => {
+                const sectionMode = section.dataset.previewSection;
+                let visible = false;
+                if (normalized === 'performance') visible = sectionMode === 'performance';
+                if (normalized === 'report') visible = sectionMode === 'report';
+                section.classList.toggle('is-hidden', !visible);
+            });
+        }
+
+        function loadFormFromData(data) {
+            const linkedUsers = getLinkedUsersForProfile(data.name);
+            document.getElementById('name').value = safeFieldValue(data.name);
+            document.getElementById('photo').value = normalizePhotoPath(safeFieldValue(data.photo));
+            document.getElementById('belt').value = safeFieldValue(data.belt);
+            document.getElementById('age').value = safeFieldValue(data.age);
+            document.getElementById('division').value = safeFieldValue(data.division);
+            document.getElementById('eventType').value = safeFieldValue(data.eventType);
+            document.getElementById('athleteId').value = safeFieldValue(data.athleteId);
+            document.getElementById('joinedProgram').value = safeFieldValue(data.joinedProgram);
+            document.getElementById('clubName').value = safeFieldValue(data.clubName);
+            document.getElementById('coachName').value = safeFieldValue(data.coachName);
+            document.getElementById('goal').value = safeFieldValue(data.goal);
+            document.getElementById('childUsername').value = safeFieldValue(data.childUsername || (linkedUsers.athlete && linkedUsers.athlete.name));
+            document.getElementById('childPassword').value = safeFieldValue(data.childPassword || (linkedUsers.athlete && linkedUsers.athlete.password));
+            document.getElementById('parentName').value = safeFieldValue(data.parentName || (linkedUsers.parent && linkedUsers.parent.name));
+            document.getElementById('parentPassword').value = safeFieldValue(data.parentPassword || (linkedUsers.parent && linkedUsers.parent.password));
+            document.getElementById('kata').value = (data.categories && data.categories.kata) || '';
+            document.getElementById('kumite').value = (data.categories && data.categories.kumite) || '';
+            document.getElementById('strengths').value = (data.strengths || []).join(', ');
+            document.getElementById('weaknesses').value = (data.weaknesses || []).join(', ');
+            document.getElementById('goals').value = (data.goals || []).join(', ');
+            renderBuilder('strengths-builder', data.strengths || [], addStrengthRow);
+            renderBuilder('weaknesses-builder', data.weaknesses || [], addWeaknessRow);
+            renderBuilder('goals-builder', data.goals || [], addGoalRow);
+            document.getElementById('coachNote').value = safeFieldValue(data.coachNote);
+            document.getElementById('readiness').value = safeFieldValue(data.readiness);
+            document.getElementById('bars').value = (data.readinessMetrics || DEFAULT_READINESS_METRICS).map(item => `${item.label}:${item.value}${item.icon ? `:${item.icon}` : ''}`).join('\n');
+            document.getElementById('activitySummary').value = (data.activitySummary || DEFAULT_ACTIVITY_SUMMARY).map(item => `${item.title || ''}|${item.value || ''}|${item.percent || ''}|${item.status || ''}|${item.icon || ''}`).join('\n');
+            document.getElementById('events').value = (data.events || []).map(item => `${item.date || ''},${item.name || ''},${item.location || ''}`).join('\n');
+            document.getElementById('feedback').value = (data.feedback || []).map(item => `${item.name || ''}|${item.comment || ''}|${item.color || 'gold'}`).join('\n');
+            renderBuilder('readiness-builder', data.readinessMetrics || DEFAULT_READINESS_METRICS, addReadinessRow);
+            renderBuilder('activity-builder', data.activitySummary || DEFAULT_ACTIVITY_SUMMARY, addActivityRow);
+            renderBuilder('events-builder', data.events || [], addEventRow);
+            renderBuilder('feedback-builder', data.feedback || [], addFeedbackRow);
+            document.getElementById('attendance').value = (data.attendance || []).join('\n');
+            renderBuilder('attendance-builder', (data.attendance || []).map(item => {
+                const parts = item.split(' - ');
+                return { date: parts[0] || '', status: parts[1] || '', note: parts.slice(2).join(' - ') || '' };
+            }), addAttendanceRow);
+            document.getElementById('ptTracking').value = safeFieldValue(data.ptTracking);
+            document.getElementById('homeProgram').value = safeFieldValue(data.homeProgram);
+            document.getElementById('videoLogs').value = (data.videoLogs || []).map(item => `${item.title || ''},${item.url || ''}`).join('\n');
+            renderBuilder('video-builder', data.videoLogs || [], addVideoRow);
+            document.getElementById('tournamentPrep').value = (data.tournamentPrep || []).join('\n');
+            renderBuilder('prep-builder', data.tournamentPrep || [], addPrepRow);
+            document.getElementById('tournamentResults').value = (data.tournamentResults || []).join('\n');
+            document.getElementById('fitnessTesting').value = data.fitnessTesting && typeof data.fitnessTesting === 'object' ? Object.keys(data.fitnessTesting).map(key => `${key}:${data.fitnessTesting[key]}`).join('\n') : '';
+            document.getElementById('mentalPerformance').value = data.mentalPerformance && typeof data.mentalPerformance === 'object' ? Object.keys(data.mentalPerformance).map(key => `${key}:${data.mentalPerformance[key]}`).join('\n') : '';
+            updateLivePreview();
+        }
+
+        function getEmptyProfile() {
+            return {
+                name: '',
+                photo: '',
+                belt: '',
+                age: '',
+                division: '',
+                eventType: '',
+                athleteId: '',
+                joinedProgram: '',
+                clubName: '',
+                coachName: '',
+                goal: '',
+                childUsername: '',
+                childPassword: '',
+                parentName: '',
+                parentPassword: '',
+                categories: { kata: '', kumite: '' },
+                strengths: [],
+                weaknesses: [],
+                goals: [],
+                coachNote: '',
+                readiness: 0,
+                readinessMetrics: DEFAULT_READINESS_METRICS,
+                activitySummary: DEFAULT_ACTIVITY_SUMMARY,
+                events: [],
+                feedback: [],
+                attendance: [],
+                ptTracking: '',
+                homeProgram: '',
+                videoLogs: [],
+                tournamentPrep: [],
+                tournamentResults: [],
+                fitnessTesting: {},
+                mentalPerformance: {}
+            };
+        }
+
+        function loadProfile(name) {
+            selectedChildName = name;
+            loadFormFromData({ ...getEmptyProfile(), ...(dashboards[name] || { name }) });
+            updateChildListUI();
+            setSaveStatus(`Opened ${name}. Make changes below, then press Save Changes.`, false, false);
+        }
+
+        function clearProfileForm() {
+            selectedChildName = null;
+            loadFormFromData(getEmptyProfile());
+            updateChildListUI();
+            setSaveStatus('');
+        }
+
+        function updateDeleteProfileVisibility() {
+            const button = document.getElementById('delete-child-profile');
+            if (!button) return;
+            button.style.display = selectedChildName ? 'inline-flex' : 'none';
+        }
+
+        function removeProfileUsers(profileName) {
+            const users = getUsers();
+            return users.filter(user => {
+                const role = (user.role || '').toLowerCase();
+                if (role === 'athlete' && (user.childName || user.name) === profileName) return false;
+                if (role === 'parent' && user.childName === profileName) return false;
+                return true;
+            });
+        }
+
+        function deleteProfile(profileName) {
+            if (!profileName || !dashboards[profileName]) return;
+            if (!window.confirm(`Permanently delete the profile "${profileName}" and remove linked logins?`)) {
+                return;
+            }
+
+            delete dashboards[profileName];
+            setDashboards(dashboards);
+
+            const updatedUsers = removeProfileUsers(profileName);
+            setStoredItem('users', JSON.stringify(updatedUsers));
+            document.getElementById('users').value = formatUserLines(updatedUsers);
+
+            if (selectedChildName === profileName) {
+                const remainingProfiles = Object.keys(dashboards).sort();
+                removeStoredItem('dojoData');
+                if (remainingProfiles.length) {
+                    loadProfile(remainingProfiles[0]);
+                } else {
+                    clearProfileForm();
+                }
+            } else {
+                updateChildListUI();
+            }
+
+            setSaveStatus(`Deleted profile ${profileName}.`, false, false);
+        }
+
+        function loadUsersText() {
+            document.getElementById('users').value = formatUserLines(getUsers());
+        }
+
+        function dedupeUsers(users) {
+            const seen = new Map();
+            users.forEach(user => {
+                if (!user || !user.name || !user.password) return;
+                const normalized = {
+                    name: String(user.name).trim(),
+                    password: String(user.password).trim(),
+                    role: String(user.role || '').trim(),
+                    childName: String(user.childName || '').trim()
+                };
+                const key = `${normalized.name.toLowerCase()}|${normalized.role.toLowerCase()}|${normalized.childName.toLowerCase()}`;
+                seen.set(key, normalized);
+            });
+            return Array.from(seen.values());
+        }
+
+        function rebuildChildLoginsFromProfiles(options) {
+            const config = options || {};
+            const profileNames = new Set(Object.keys(dashboards));
+            const preservedUsers = getUsers().filter(user => {
+                const role = (user.role || '').toLowerCase();
+                const linkedChild = user.childName || user.name;
+                if (user.name === DEFAULT_ADMIN_USER.name && role === 'admin') return false;
+                if ((role === 'athlete' || role === 'parent') && profileNames.has(linkedChild)) return false;
+                return true;
+            });
+
+            const rebuiltUsers = [DEFAULT_ADMIN_USER].concat(preservedUsers);
+            let childLoginCount = 0;
+            let parentLoginCount = 0;
+            let missingPasswordCount = 0;
+
+            Object.values(dashboards).forEach(profile => {
+                if (!profile || !profile.name) return;
+                const profileName = String(profile.name).trim();
+                const childUsername = String(profile.childUsername || profileName).trim();
+                const childPassword = String(profile.childPassword || '').trim();
+                const parentUsername = String(profile.parentName || '').trim();
+                const parentPassword = String(profile.parentPassword || '').trim();
+
+                if (childUsername && childPassword) {
+                    rebuiltUsers.push({
+                        name: childUsername,
+                        password: childPassword,
+                        role: 'athlete',
+                        childName: profileName
+                    });
+                    childLoginCount += 1;
+                } else {
+                    missingPasswordCount += 1;
+                }
+
+                if (parentUsername && parentPassword) {
+                    rebuiltUsers.push({
+                        name: parentUsername,
+                        password: parentPassword,
+                        role: 'parent',
+                        childName: profileName
+                    });
+                    parentLoginCount += 1;
+                }
+            });
+
+            const finalUsers = dedupeUsers(rebuiltUsers);
+            setStoredItem('users', JSON.stringify(finalUsers));
+            const usersField = document.getElementById('users');
+            if (usersField) usersField.value = formatUserLines(finalUsers);
+
+            if (!config.silent) {
+                const missingMessage = missingPasswordCount ? ` ${missingPasswordCount} profile(s) still need a child password.` : '';
+                setSaveStatus(`Repaired ${childLoginCount} child login(s) and ${parentLoginCount} parent login(s).${missingMessage}`, false, false);
+            }
+            return { childLoginCount, parentLoginCount, missingPasswordCount };
+        }
+
+        function syncProfileUsers(profileName, childUsername, childPassword, parentName, parentPassword) {
+            const baseUsers = parseUsersFromText().filter(user => {
+                const role = (user.role || '').toLowerCase();
+                const linkedChild = user.childName || user.name;
+                if (linkedChild !== profileName) return true;
+                return role === 'admin' || role === 'coach';
+            }).filter(user => user.name !== DEFAULT_ADMIN_USER.name);
+
+            const nextUsers = [DEFAULT_ADMIN_USER].concat(baseUsers);
+
+            if (childUsername && childPassword) {
+                nextUsers.push({
+                    name: childUsername,
+                    password: childPassword,
+                    role: 'athlete',
+                    childName: profileName
+                });
+            }
+
+            if (parentName && parentPassword) {
+                nextUsers.push({
+                    name: parentName,
+                    password: parentPassword,
+                    role: 'parent',
+                    childName: profileName
+                });
+            }
+
+            return nextUsers;
+        }
+
+        function collectProfileData() {
+            return {
+                name: document.getElementById('name').value.trim(),
+                photo: normalizePhotoPath(document.getElementById('photo').value.trim()),
+                belt: document.getElementById('belt').value.trim(),
+                age: document.getElementById('age').value ? parseInt(document.getElementById('age').value, 10) : '',
+                division: document.getElementById('division').value.trim(),
+                eventType: document.getElementById('eventType').value.trim(),
+                athleteId: document.getElementById('athleteId').value.trim(),
+                joinedProgram: document.getElementById('joinedProgram').value.trim(),
+                clubName: document.getElementById('clubName').value.trim(),
+                coachName: document.getElementById('coachName').value.trim(),
+                goal: document.getElementById('goal').value.trim(),
+                childUsername: document.getElementById('childUsername').value.trim(),
+                childPassword: document.getElementById('childPassword').value.trim(),
+                parentName: document.getElementById('parentName').value.trim(),
+                parentPassword: document.getElementById('parentPassword').value.trim(),
+                categories: {
+                    kata: document.getElementById('kata').value.trim(),
+                    kumite: document.getElementById('kumite').value.trim()
+                },
+                strengths: parseCommaList(document.getElementById('strengths').value.trim()),
+                weaknesses: parseCommaList(document.getElementById('weaknesses').value.trim()),
+                goals: parseCommaList(document.getElementById('goals').value.trim()),
+                coachNote: document.getElementById('coachNote').value.trim(),
+                readiness: parseInt(document.getElementById('readiness').value, 10) || 0,
+                readinessMetrics: parseReadinessMetrics(document.getElementById('bars').value),
+                activitySummary: parseActivitySummary(document.getElementById('activitySummary').value),
+                events: document.getElementById('events').value.trim().split('\n').filter(Boolean).map(line => {
+                    const parts = line.split(',');
+                    return { date: (parts[0] || '').trim(), name: (parts[1] || '').trim(), location: (parts[2] || '').trim() };
+                }),
+                feedback: parseFeedback(document.getElementById('feedback').value),
+                attendance: document.getElementById('attendance').value.trim().split('\n').filter(Boolean),
+                ptTracking: document.getElementById('ptTracking').value.trim(),
+                homeProgram: document.getElementById('homeProgram').value.trim(),
+                videoLogs: document.getElementById('videoLogs').value.trim().split('\n').filter(Boolean).map(line => {
+                    const [title, url] = line.split(',');
+                    return { title: (title || '').trim(), url: (url || '').trim() };
+                }),
+                tournamentPrep: document.getElementById('tournamentPrep').value.trim().split('\n').filter(Boolean),
+                tournamentResults: document.getElementById('tournamentResults').value.trim().split('\n').filter(Boolean),
+                fitnessTesting: parseMetricObject(document.getElementById('fitnessTesting').value),
+                mentalPerformance: parseMetricObject(document.getElementById('mentalPerformance').value)
+            };
+        }
+
+        function saveProfile(options) {
+            const config = options || {};
+            const profile = collectProfileData();
+
+            if (!profile.name) {
+                if (!config.silent) setSaveStatus('Please enter a child name or profile name.', true, false);
+                return false;
+            }
+
+            if (!profile.childUsername && profile.childPassword) {
+                profile.childUsername = profile.name;
+                document.getElementById('childUsername').value = profile.name;
+            }
+
+            if ((profile.childUsername && !profile.childPassword) || (!profile.childUsername && profile.childPassword)) {
+                if (!config.silent) setSaveStatus('Enter both the child username and child password to create the athlete login.', true, false);
+                return false;
+            }
+
+            if ((profile.parentName && !profile.parentPassword) || (!profile.parentName && profile.parentPassword)) {
+                if (!config.silent) setSaveStatus('Enter both the parent username and parent password to create the parent login.', true, false);
+                return false;
+            }
+
+            let siteJson = {};
+            try {
+                syncHomepageEditorToJson();
+                const siteStr = document.getElementById('siteData').value.trim();
+                siteJson = siteStr ? JSON.parse(siteStr) : {};
+            } catch (error) {
+                if (!config.silent) setSaveStatus('Site Data JSON is invalid. Please check your syntax.', true, false);
+                return false;
+            }
+
+            if (selectedChildName && selectedChildName !== profile.name) {
+                delete dashboards[selectedChildName];
+            }
+
+            dashboards[profile.name] = profile;
+            selectedChildName = profile.name;
+            setDashboards(dashboards);
+            setStoredItem('dojoData', JSON.stringify(profile));
+
+            const finalUsers = syncProfileUsers(profile.name, profile.childUsername, profile.childPassword, profile.parentName, profile.parentPassword);
+            setStoredItem('users', JSON.stringify(finalUsers));
+            document.getElementById('users').value = formatUserLines(finalUsers);
+
+            setStoredItem('siteData', JSON.stringify(siteJson));
+            updateChildListUI();
+            setSaveStatus(config.autosave ? `Autosaved ${profile.name}` : `Saved ${profile.name}. Child and parent dashboard logins are now linked.`, false, false);
+            setLastSavedLabel(new Date());
+            return true;
+        }
+
+        function scheduleAutosave() {
+            if (!isAutosavingEnabled) return;
+            clearTimeout(autosaveTimer);
+            setSaveStatus('Autosave pending...', false, true);
+            autosaveTimer = window.setTimeout(() => {
+                saveProfile({ autosave: true, silent: true });
+            }, 900);
+        }
+
+        function buildTabbedWorkflow() {
+            const form = document.getElementById('admin-form');
+            const tabsHost = document.getElementById('editor-tabs');
+            if (!form || !tabsHost || tabsHost.children.length) return;
+
+            const tabConfig = [
+                {
+                    key: 'profile',
+                    label: 'Profile',
+                    selectors: ['#name', '#photo', '#belt', '#age', '#division', '#eventType', '#athleteId', '#joinedProgram', '#clubName', '#coachName', '#goal', '#kata', '#kumite']
+                },
+                {
+                    key: 'performance',
+                    label: 'Performance',
+                    selectors: ['#strengths', '#weaknesses', '#goals', '#readiness', '#bars', '#activitySummary', '#events']
+                },
+                {
+                    key: 'attendance',
+                    label: 'Attendance',
+                    selectors: ['#attendance', '#ptTracking', '#homeProgram', '#tournamentPrep', '#tournamentResults']
+                },
+                {
+                    key: 'report',
+                    label: 'Coach Report',
+                    selectors: ['#coachNote', '#feedback']
+                },
+                {
+                    key: 'media',
+                    label: 'Media',
+                    selectors: ['#videoLogs', '#fitnessTesting', '#mentalPerformance']
+                },
+                {
+                    key: 'access',
+                    label: 'Login Access',
+                    selectors: ['#childUsername', '#childPassword', '#parentName', '#parentPassword', '#users']
+                },
+                {
+                    key: 'homepage',
+                    label: 'Homepage',
+                    selectors: ['#homepage-editor', '#siteData']
+                }
+            ];
+
+            tabConfig.forEach((tab, index) => {
+                const button = document.createElement('a');
+                button.href = `#${tab.key}`;
+                button.className = `editor-tab${index === 0 ? ' is-active' : ''}`;
+                button.dataset.tab = tab.key;
+                button.textContent = tab.label;
+                tabsHost.appendChild(button);
+            });
+
+            const assignBlock = (selector, key) => {
+                const field = form.querySelector(selector);
+                if (!field) return;
+                const block = field.closest('.form-group');
+                if (block) block.dataset.tabPane = key;
+                let previous = block ? block.previousElementSibling : null;
+                if (previous && previous.classList.contains('section-title')) previous.dataset.tabPane = key;
+            };
+
+            tabConfig.forEach(tab => {
+                tab.selectors.forEach(selector => assignBlock(selector, tab.key));
+            });
+
+            const allBlocks = Array.from(form.children).filter(node =>
+                node.classList && (node.classList.contains('form-group') || node.classList.contains('section-title'))
+            );
+
+            const activateTab = (key) => {
+                if (!tabConfig.some(tab => tab.key === key)) {
+                    key = 'profile';
+                }
+                activeEditorTab = key;
+                tabsHost.querySelectorAll('.editor-tab').forEach(tabButton => {
+                    tabButton.classList.toggle('is-active', tabButton.dataset.tab === key);
+                });
+                allBlocks.forEach(block => {
+                    const show = !block.dataset.tabPane || block.dataset.tabPane === key;
+                    block.style.display = show ? '' : 'none';
+                });
+                if (key === 'performance' || key === 'attendance') {
+                    setPreviewMode('performance');
+                } else if (key === 'report') {
+                    setPreviewMode('report');
+                } else {
+                    setPreviewMode('profile');
+                }
+            };
+            window.activateEditorTab = activateTab;
+
+            tabsHost.addEventListener('click', (event) => {
+                const button = event.target.closest('.editor-tab');
+                if (!button) return;
+                event.preventDefault();
+                const requestedTab = button.dataset.tab;
+                if (!requestedTab) return;
+                history.replaceState(null, '', `#${requestedTab}`);
+                activateTab(requestedTab);
+            });
+
+            window.addEventListener('hashchange', () => {
+                const requestedTab = window.location.hash.slice(1);
+                if (requestedTab) {
+                    activateTab(requestedTab);
+                }
+            });
+
+            const initialTab = window.location.hash.slice(1);
+            activateTab(initialTab || 'profile');
+        }
+
+        function initAdmin() {
+            ensureDefaultAdminUser();
+            const currentUser = requireAdminAccess();
+            if (!currentUser) return;
+            buildTabbedWorkflow();
+            setLastSavedLabel(null);
+
+            ['name', 'photo', 'age', 'division', 'eventType', 'belt', 'coachName', 'readiness'].forEach(id => {
+                const field = document.getElementById(id);
+                if (field) {
+                    field.addEventListener('input', updateLivePreview);
+                    field.addEventListener('change', updateLivePreview);
+                }
+            });
+            document.getElementById('admin-form').addEventListener('input', updateLivePreview);
+            document.getElementById('admin-form').addEventListener('change', updateLivePreview);
+
+            document.getElementById('note-template-focus').addEventListener('click', () => {
+                document.getElementById('coachNote').value = 'The athlete is showing strong focus in training and responds well to technical correction. Continue reinforcing consistency, confidence, and clean execution under pressure.';
+                updateLivePreview();
+                scheduleAutosave();
+            });
+            document.getElementById('note-template-progress').addEventListener('click', () => {
+                document.getElementById('coachNote').value = 'This athlete has made encouraging progress over the last phase. Strengths are becoming more reliable, and the next step is to sharpen discipline, timing, and match readiness.';
+                updateLivePreview();
+                scheduleAutosave();
+            });
+            document.getElementById('note-template-competition').addEventListener('click', () => {
+                document.getElementById('coachNote').value = 'Competition preparation is improving well. The focus now is on tactical sharpness, emotional control, and delivering confident performances when it matters most.';
+                updateLivePreview();
+                scheduleAutosave();
+            });
+            document.getElementById('add-strength-row').addEventListener('click', () => addStrengthRow(''));
+            document.getElementById('add-weakness-row').addEventListener('click', () => addWeaknessRow(''));
+            document.getElementById('add-goal-row').addEventListener('click', () => addGoalRow(''));
+            document.getElementById('add-attendance-row').addEventListener('click', () => addAttendanceRow({ date: '', status: 'Present', note: '' }));
+            document.getElementById('add-prep-row').addEventListener('click', () => addPrepRow(''));
+            document.getElementById('add-video-row').addEventListener('click', () => addVideoRow({ title: '', url: '' }));
+            document.getElementById('add-readiness-row').addEventListener('click', () => addReadinessRow({ label: '', value: '', icon: 'fa-solid fa-star' }));
+            document.getElementById('add-activity-row').addEventListener('click', () => addActivityRow({ title: '', value: '', percent: '', status: 'ATTENDED', icon: 'fa-solid fa-chart-line' }));
+            document.getElementById('add-event-row').addEventListener('click', () => addEventRow({ date: '', name: '', location: '' }));
+            document.getElementById('add-feedback-row').addEventListener('click', () => addFeedbackRow({ name: '', comment: '', color: 'gold' }));
+
+            document.getElementById('admin-session').textContent = `Signed in as ${currentUser.name} (${currentUser.role || 'admin'})`;
+            document.getElementById('admin-logout').addEventListener('click', () => {
+                removeStoredItem('currentUser');
+                window.location.href = 'login.html';
+            });
+
+            document.getElementById('preview-child-dashboard').addEventListener('click', () => {
+                const childName = document.getElementById('name').value.trim();
+                const childUsername = document.getElementById('childUsername').value.trim() || childName;
+                if (!childName) {
+                    setSaveStatus('Add a child name before previewing the dashboard.', true);
+                    return;
+                }
+                const adminSession = JSON.stringify(currentUser);
+                setStoredItem('currentUser', JSON.stringify({
+                    name: childUsername,
+                    role: 'athlete',
+                    childName: childName
+                }));
+                window.open('dashboard.html', '_blank');
+                setTimeout(() => {
+                    setStoredItem('currentUser', adminSession);
+                }, 200);
+            });
+
+            dashboards = getDashboards();
+            if (Object.keys(dashboards).length) {
+                rebuildChildLoginsFromProfiles({ silent: true });
+                const firstProfile = Object.keys(dashboards).sort()[0];
+                loadProfile(firstProfile);
+            } else {
+                clearProfileForm();
+            }
+
+            loadUsersText();
+
+            const storedSite = getStoredItem('siteData');
+            const siteObj = typeof window.mergeSiteData === 'function'
+                ? window.mergeSiteData(safeJsonParse(storedSite, null))
+                : safeJsonParse(storedSite, {});
+            document.getElementById('siteData').value = JSON.stringify(siteObj, null, 2);
+            buildHomepageEditorFields(siteObj);
+
+            const autosaveFields = document.querySelectorAll('#admin-form input, #admin-form textarea, #admin-form select');
+            autosaveFields.forEach(field => {
+                field.addEventListener('input', scheduleAutosave);
+                field.addEventListener('change', scheduleAutosave);
+            });
+            document.querySelectorAll('[data-homepage-path]').forEach(field => {
+                field.addEventListener('input', syncHomepageEditorToJson);
+                field.addEventListener('change', syncHomepageEditorToJson);
+            });
+            isAutosavingEnabled = true;
+        }
+
+        document.getElementById('new-child-profile').addEventListener('click', clearProfileForm);
+        document.getElementById('repair-child-logins').addEventListener('click', () => {
+            rebuildChildLoginsFromProfiles({ silent: false });
+        });
+        document.getElementById('delete-child-profile').addEventListener('click', () => {
+            if (selectedChildName) {
+                deleteProfile(selectedChildName);
+            }
+        });
+        document.getElementById('profile-select').addEventListener('change', (event) => {
+            if (!event.target.value) return;
+            loadProfile(event.target.value);
+        });
+        document.getElementById('edit-homepage').addEventListener('click', () => {
+            if (typeof window.activateEditorTab === 'function') {
+                window.activateEditorTab('homepage');
+            }
+            document.getElementById('homepage-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        document.getElementById('admin-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            clearTimeout(autosaveTimer);
+            saveProfile({ autosave: false, silent: false });
+        });
+
+        initAdmin();
+    </script>
+</body>
+</html>

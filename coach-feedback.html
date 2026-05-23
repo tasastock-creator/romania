@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Feedback - LionMode Elite Dashboard</title>
+    <link rel="stylesheet" href="style.css?v=5">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+            <div class="dashboard-sidebar__brand">
+                <img class="dashboard-sidebar__logo" src="home__lionmode-logo.webp" alt="LionMode Elite logo">
+                <div class="dashboard-sidebar__roadmap">ROAD TO <span>Romania 2026</span></div>
+            </div>
+            <ul id="dashboard-sidebar-nav" class="dashboard-sidebar__nav"></ul>
+            <div class="dashboard-sidebar__quote">
+                “Discipline today<br>excellence tomorrow<br>champion forever”
+            </div>
+        </aside>
+        <main class="dashboard-main">
+            <section class="dashboard-hero">
+                <div class="dashboard-athlete-card">
+                    <div class="dashboard-athlete-card__photo-wrap">
+                        <div class="dashboard-page-hero-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                    </div>
+                    <div class="dashboard-athlete-card__summary">
+                        <div class="dashboard-athlete-card__title">
+                            <h1>Coach Feedback</h1>
+                            <p>View in-depth coach notes, review trends, and track next steps in training.</p>
+                        </div>
+                        <div class="dashboard-athlete-card__meta" id="feedback-meta">
+                            <div class="meta-row"><span>Latest Note</span><strong>Great focus today</strong></div>
+                            <div class="meta-row"><span>Feedback Date</span><strong>12 May 2025</strong></div>
+                            <div class="meta-row"><span>Next Coaching</span><strong>18 May 2025</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="dashboard-grid dashboard-grid--upper">
+                <article class="dashboard-panel dashboard-panel--feedback">
+                    <div class="dashboard-panel__title dashboard-panel__title--gold"><h2>Summary Notes</h2></div>
+                    <ul class="dashboard-list dashboard-list--good">
+                        <li>Excellent focus in the current training block</li>
+                        <li>Strong responsiveness to corrections</li>
+                        <li>Maintaining positive training energy</li>
+                    </ul>
+                </article>
+                <article class="dashboard-panel dashboard-panel--strengths">
+                    <div class="dashboard-panel__title dashboard-panel__title--green"><h2>Feedback Highlights</h2></div>
+                    <p>Coach observations, tactical feedback, and performance highlights that should shape the next training week.</p>
+                </article>
+                <article class="dashboard-panel dashboard-panel--weaknesses">
+                    <div class="dashboard-panel__title dashboard-panel__title--red"><h2>Refinement Points</h2></div>
+                    <ul class="dashboard-list dashboard-list--warn">
+                        <li>Sharpen sparring reaction timing</li>
+                        <li>Increase consistency in footwork execution</li>
+                        <li>Keep transition speed smooth and controlled</li>
+                    </ul>
+                </article>
+            </section>
+            <section class="dashboard-grid dashboard-grid--lower">
+                <article class="dashboard-panel dashboard-panel--goals">
+                    <div class="dashboard-panel__title dashboard-panel__title--gold"><h2>Next Steps</h2></div>
+                    <ul class="dashboard-number-list">
+                        <li>Review coach feedback after every session</li>
+                        <li>Apply comments to the next practice</li>
+                        <li>Track improvement in the next review</li>
+                    </ul>
+                </article>
+                <article class="dashboard-panel dashboard-panel--note">
+                    <div class="dashboard-panel__title dashboard-panel__title--gold"><h2>Action Plan</h2></div>
+                    <p>Focus on one correction per session to build stronger habits without overwhelming the athlete.</p>
+                </article>
+                <article class="dashboard-panel dashboard-panel--events">
+                    <div class="dashboard-panel__title"><h2>Feedback Cycle</h2></div>
+                    <ul class="dashboard-event-list">
+                        <li>Coach check-in next week</li>
+                        <li>Video review follow-up</li>
+                        <li>Training notes update</li>
+                    </ul>
+                </article>
+            </section>
+        </main>
+    </div>
+    <script src="dashboard-sidebar.js"></script>
+</body>
+</html>

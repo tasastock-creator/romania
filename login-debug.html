@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Debug – Storage Inspector</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+        .section { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #333; }
+        h2 { margin-top: 0; color: #333; }
+        pre { background: #f0f0f0; padding: 10px; overflow-x: auto; border-radius: 3px; }
+        .warning { border-left-color: #ff6b6b; }
+        .success { border-left-color: #51cf66; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; background: #4c6ef5; color: white; border: none; border-radius: 3px; }
+        button:hover { background: #364fc7; }
+        .data-row { margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Login System Diagnostic</h1>
+    
+    <div class="section success">
+        <h2>✓ Storage Contents</h2>
+        <div id="storage-content"></div>
+    </div>
+
+    <div class="section warning">
+        <h2>⚠ Login Test Simulation</h2>
+        <input type="text" id="test-username" placeholder="Test username" value="">
+        <input type="password" id="test-password" placeholder="Test password" value="">
+        <button onclick="testLogin()">Test Login</button>
+        <div id="test-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>📋 Users Array</h2>
+        <div id="users-info"></div>
+    </div>
+
+    <div class="section">
+        <h2>📊 Dashboards/Profiles</h2>
+        <div id="dashboards-info"></div>
+    </div>
+
+    <div class="section">
+        <h2>🧪 What Needs to Exist for Child Login</h2>
+        <div id="requirements"></div>
+    </div>
+
+    <script>
+        function getStorageCandidates() {
+            const stores = [];
+            try {
+                if (window.localStorage) stores.push({ name: 'localStorage', store: window.localStorage });
+            } catch (e) {}
+            try {
+                if (window.sessionStorage) stores.push({ name: 'sessionStorage', store: window.sessionStorage });
+            } catch (e) {}
+            return stores;
+        }
+
+        function parseJson(value) {
+            try {
+                return JSON.parse(value);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function inspectStorage() {
+            const content = document.getElementById('storage-content');
+            const stores = getStorageCandidates();
+            
+            let html = '';
+            stores.forEach(({ name, store }) => {
+                html += `<div class="data-row"><strong>${name}:</strong>`;
+                for (let key in store) {
+                    if (store.hasOwnProperty(key)) {
+                        const value = store.getItem(key);
+                        html += `<div style="margin-left: 20px;">
+                            <strong>${key}:</strong> ${value ? value.substring(0, 100) + (value.length > 100 ? '...' : '') : '(empty)'}
+                        </div>`;
+                    }
+                }
+                html += '</div>';
+            });
+            content.innerHTML = html || '<p>(No storage found)</p>';
+        }
+
+        function inspectUsers() {
+            const usersInfo = document.getElementById('users-info');
+            const stores = getStorageCandidates();
+            
+            let users = [];
+            stores.forEach(({ store }) => {
+                const usersStr = store.getItem('users');
+                if (usersStr) {
+                    const parsed = parseJson(usersStr);
+                    if (Array.isArray(parsed)) users = parsed;
+                }
+            });
+
+            let html = `<p>Found <strong>${users.length}</strong> users:</p>`;
+            if (users.length === 0) {
+                html += '<p style="color: red;">❌ NO USERS FOUND</p>';
+            } else {
+                html += '<pre>' + JSON.stringify(users, null, 2) + '</pre>';
+                users.forEach((user, idx) => {
+                    html += `<div class="data-row">
+                        <strong>User ${idx}:</strong> ${user.name} (role: ${user.role || 'none'})
+                        ${user.childName ? `childName: ${user.childName}` : ''}
+                    </div>`;
+                });
+            }
+            usersInfo.innerHTML = html;
+        }
+
+        function inspectDashboards() {
+            const dashInfo = document.getElementById('dashboards-info');
+            const stores = getStorageCandidates();
+            
+            let dashboards = {};
+            let dojoData = null;
+
+            stores.forEach(({ store }) => {
+                const dashStr = store.getItem('dashboards');
+                const dojStr = store.getItem('dojoData');
+                
+                if (dashStr) {
+                    const parsed = parseJson(dashStr);
+                    if (parsed && typeof parsed === 'object') dashboards = parsed;
+                }
+                if (dojStr) {
+                    const parsed = parseJson(dojStr);
+                    if (parsed && typeof parsed === 'object') dojoData = parsed;
+                }
+            });
+
+            let html = '<h3>Dashboards Object:</h3>';
+            if (Object.keys(dashboards).length === 0) {
+                html += '<p style="color: red;">❌ NO DASHBOARDS</p>';
+            } else {
+                html += '<pre>' + JSON.stringify(dashboards, null, 2) + '</pre>';
+            }
+
+            html += '<h3>DojoData (Fallback):</h3>';
+            if (!dojoData) {
+                html += '<p style="color: red;">❌ NO DOJO DATA</p>';
+            } else {
+                html += '<pre>' + JSON.stringify(dojoData, null, 2) + '</pre>';
+                if (dojoData.childUsername) {
+                    html += `<p style="color: green;">✓ Has childUsername: <strong>${dojoData.childUsername}</strong></p>`;
+                }
+                if (dojoData.childPassword) {
+                    html += `<p style="color: green;">✓ Has childPassword</p>`;
+                }
+            }
+
+            dashInfo.innerHTML = html;
+        }
+
+        function showRequirements() {
+            const req = document.getElementById('requirements');
+            req.innerHTML = `
+                <p>For child login to work, ONE of these must be true:</p>
+                <ol>
+                    <li><strong>Users array contains athlete user:</strong>
+                        <pre>{
+  "name": "childUsername",
+  "password": "childPassword",
+                            "role": "athlete",
+  "childName": "profileName"
+}</pre>
+                    </li>
+                    <li><strong>Dashboards has profile with childPassword:</strong>
+                        <pre>{
+  "profileName": {
+    "name": "profileName",
+    "childUsername": "childUsername",
+    "childPassword": "childPassword",
+    ...
+  }
+}</pre>
+                    </li>
+                    <li><strong>DojoData (fallback) has childPassword:</strong>
+                        <pre>{
+  "name": "profileName",
+  "childUsername": "childUsername",
+  "childPassword": "childPassword",
+  ...
+}</pre>
+                    </li>
+                </ol>
+            `;
+        }
+
+        function testLogin() {
+            const username = document.getElementById('test-username').value.trim();
+            const password = document.getElementById('test-password').value.trim();
+            const result = document.getElementById('test-result');
+
+            if (!username || !password) {
+                result.innerHTML = '<p style="color: orange;">⚠ Enter username and password</p>';
+                return;
+            }
+
+            const stores = getStorageCandidates();
+            let users = [];
+            let dashboards = {};
+            let dojoData = null;
+
+            stores.forEach(({ store }) => {
+                const usersStr = store.getItem('users');
+                const dashStr = store.getItem('dashboards');
+                const dojStr = store.getItem('dojoData');
+
+                if (usersStr) {
+                    const parsed = parseJson(usersStr);
+                    if (Array.isArray(parsed)) users = parsed;
+                }
+                if (dashStr) {
+                    const parsed = parseJson(dashStr);
+                    if (parsed && typeof parsed === 'object') dashboards = parsed;
+                }
+                if (dojStr) {
+                    const parsed = parseJson(dojStr);
+                    if (parsed && typeof parsed === 'object') dojoData = parsed;
+                }
+            });
+
+            let html = `<h3>Testing: ${username} / ${password}</h3>`;
+
+            // Check users array
+            html += '<h4>1. Checking users array:</h4>';
+            const foundUser = users.find(u => 
+                String(u.name).trim().toLowerCase() === username.toLowerCase() && 
+                String(u.password || '').trim() === password
+            );
+            if (foundUser) {
+                html += `<p style="color: green;">✓ FOUND in users array: ${JSON.stringify(foundUser)}</p>`;
+            } else {
+                html += `<p style="color: red;">✗ Not found in users array</p>`;
+                html += `<p>Available users: ${users.map(u => `${u.name}(${u.password})`).join(', ') || 'none'}</p>`;
+            }
+
+            // Check dashboards/dojoData
+            html += '<h4>2. Checking dashboards profiles:</h4>';
+            let foundProfile = false;
+            for (const profile of Object.values(dashboards)) {
+                const childUsername = String(profile.childUsername || profile.name || '').trim().toLowerCase();
+                const childPassword = String(profile.childPassword || profile.password || profile.loginPassword || '').trim();
+                if (childUsername === username.toLowerCase() && childPassword === password) {
+                    html += `<p style="color: green;">✓ FOUND in dashboards: ${profile.name}</p>`;
+                    html += `<pre>${JSON.stringify(profile, null, 2)}</pre>`;
+                    foundProfile = true;
+                }
+            }
+            if (!foundProfile) html += `<p style="color: red;">✗ Not found in dashboards</p>`;
+
+            // Check dojoData
+            html += '<h4>3. Checking dojoData fallback:</h4>';
+            if (dojoData) {
+                const childUsername = String(dojoData.childUsername || dojoData.name || '').trim().toLowerCase();
+                const childPassword = String(dojoData.childPassword || dojoData.password || '').trim();
+                if (childUsername === username.toLowerCase() && childPassword === password) {
+                    html += `<p style="color: green;">✓ FOUND in dojoData</p>`;
+                    html += `<pre>${JSON.stringify(dojoData, null, 2)}</pre>`;
+                    foundProfile = true;
+                }
+            }
+            if (!dojoData) html += `<p style="color: red;">✗ No dojoData</p>`;
+
+            if (!foundUser && !foundProfile) {
+                html += '<p style="color: red; font-weight: bold;">❌ LOGIN WOULD FAIL</p>';
+            } else {
+                html += '<p style="color: green; font-weight: bold;">✓ LOGIN WOULD SUCCEED</p>';
+            }
+
+            result.innerHTML = html;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            inspectStorage();
+            inspectUsers();
+            inspectDashboards();
+            showRequirements();
+        });
+    </script>
+</body>
+</html>

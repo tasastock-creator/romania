@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LionMode Elite Dashboard</title>
+    <link rel="stylesheet" href="style.css?v=5">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+            <div class="dashboard-sidebar__brand">
+                <img class="dashboard-sidebar__logo" src="home__lionmode-logo.webp" alt="LionMode Elite logo">
+                <div class="dashboard-sidebar__roadmap">ROAD TO <span>Romania 2026</span></div>
+            </div>
+
+            <ul id="dashboard-sidebar-nav" class="dashboard-sidebar__nav"></ul>
+
+            <div class="dashboard-sidebar__quote">
+                “Discipline today<br>excellence tomorrow<br>champion forever”
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <section class="dashboard-hero">
+                <div class="dashboard-athlete-card">
+                    <div class="dashboard-athlete-card__photo-wrap">
+                        <img id="child-photo" class="dashboard-athlete-card__photo" src="dashboard-athlete-reference.png" alt="Athlete photo">
+                    </div>
+
+                    <div class="dashboard-athlete-card__summary">
+                        <div class="dashboard-athlete-card__title">
+                            <h1 id="child-name">Rayna Panday</h1>
+                            <p id="child-age">7 Years Old</p>
+                        </div>
+
+                        <div class="dashboard-athlete-card__meta" id="athlete-meta">
+                            <div class="meta-row">
+                                <span><i class="fa-solid fa-bullseye"></i> ATHLETE ID</span>
+                                <strong id="athlete-id">LMELITE-RP-001</strong>
+                            </div>
+                            <div class="meta-row">
+                                <span><i class="fa-solid fa-user"></i> BELT</span>
+                                <strong id="child-belt">Yellow Belt</strong>
+                            </div>
+                            <div class="meta-row">
+                                <span><i class="fa-solid fa-shield"></i> CLUB</span>
+                                <strong id="club-name">LionMode Elite</strong>
+                            </div>
+                            <div class="meta-row">
+                                <span><i class="fa-regular fa-circle-user"></i> COACH</span>
+                                <strong id="coach-name">Sensei Sudhir</strong>
+                            </div>
+                            <div class="meta-row">
+                                <span><i class="fa-regular fa-calendar-days"></i> JOINED PROGRAM</span>
+                                <strong id="joined-program">January 2025</strong>
+                            </div>
+                            <div class="meta-row">
+                                <span><i class="fa-solid fa-award"></i> GOAL</span>
+                                <strong id="goal">World Champion – Romania 2026</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-scoreboard">
+                    <div class="dashboard-scoreboard__top">
+                        <article class="dashboard-chip-card">
+                            <div class="chip-card__icon"><i class="fa-solid fa-person"></i></div>
+                            <div>
+                                <span>Division</span>
+                                <strong id="division">8 &amp; Under</strong>
+                            </div>
+                        </article>
+                        <article class="dashboard-chip-card">
+                            <div class="chip-card__icon"><i class="fa-solid fa-people-arrows-left-right"></i></div>
+                            <div>
+                                <span>Events</span>
+                                <strong id="event-type">Kata &amp; Kumite</strong>
+                            </div>
+                        </article>
+                    </div>
+
+                    <article class="dashboard-readiness-card">
+                        <div class="dashboard-card__heading">Romania Readiness Score <i class="fa-solid fa-circle-info"></i></div>
+                        <div class="dashboard-readiness-card__content">
+                            <div class="readiness-ring-panel">
+                                <div class="readiness-ring" id="readiness-circle">
+                                    <span id="readiness-value">78%</span>
+                                </div>
+                                <div class="readiness-caption">Keep Building<br>Champion</div>
+                            </div>
+                            <div class="readiness-bars" id="readiness-metrics"></div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="dashboard-grid dashboard-grid--upper">
+                <article class="dashboard-panel dashboard-panel--strengths">
+                    <div class="dashboard-panel__title dashboard-panel__title--green">
+                        <h2>Strengths</h2>
+                        <i class="fa-solid fa-shield-heart"></i>
+                    </div>
+                    <ul id="strengths-list" class="dashboard-list dashboard-list--good"></ul>
+                </article>
+
+                <article class="dashboard-panel dashboard-panel--weaknesses">
+                    <div class="dashboard-panel__title dashboard-panel__title--red">
+                        <h2>Areas to Improve</h2>
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <ul id="weaknesses-list" class="dashboard-list dashboard-list--warn"></ul>
+                </article>
+
+                <article class="dashboard-panel dashboard-panel--activity">
+                    <div class="dashboard-panel__title">
+                        <h2>Recent Activity Summary</h2>
+                    </div>
+                    <div id="activity-summary" class="dashboard-activity-grid"></div>
+                </article>
+            </section>
+
+            <section class="dashboard-grid dashboard-grid--lower">
+                <article class="dashboard-panel dashboard-panel--goals">
+                    <div class="dashboard-panel__title dashboard-panel__title--gold">
+                        <h2>Goals</h2>
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+                    <ol id="goals-list" class="dashboard-number-list"></ol>
+                </article>
+
+                <article class="dashboard-panel dashboard-panel--note">
+                    <div class="dashboard-panel__title dashboard-panel__title--gold">
+                        <h2>Coach’s Note</h2>
+                        <i class="fa-solid fa-comment-medical"></i>
+                    </div>
+                    <p id="coach-note" class="dashboard-note-text">Keep up the excellent work!</p>
+                    <div class="dashboard-note-signature">– Sensei Sudhir</div>
+                </article>
+
+                <article class="dashboard-panel dashboard-panel--events">
+                    <div class="dashboard-panel__title">
+                        <h2>Upcoming Events</h2>
+                    </div>
+                    <ul id="events-list" class="dashboard-event-list"></ul>
+                </article>
+
+                <article class="dashboard-panel dashboard-panel--feedback">
+                    <div class="dashboard-panel__title dashboard-panel__title--gold">
+                        <h2>Latest Feedback</h2>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <ul id="feedback-list" class="dashboard-feedback-list"></ul>
+                    <div class="dashboard-feedback__cta">View All Feedback <i class="fa-solid fa-arrow-right-long"></i></div>
+                </article>
+            </section>
+
+            <footer class="dashboard-banner">
+                <div class="dashboard-banner__message">
+                    <strong>One team. One mission. One championship.</strong>
+                    <span>Together we become elite</span>
+                </div>
+                <img class="dashboard-banner__crest" src="home__lionmode-logo.webp" alt="" aria-hidden="true">
+                <div class="dashboard-banner__destination">
+                    <img class="dashboard-banner__badge-image" src="dashboard-wukf-badge.png" alt="WUKF badge">
+                    <div>
+                        <span>World Championships</span>
+                        <strong>Romania 2026</strong>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="dashboard.js?v=2026-05-21-child-login-fix"></script>
+    <script src="dashboard-sidebar.js"></script>
+</body>
+</html>
