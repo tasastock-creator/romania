@@ -383,6 +383,37 @@
             line-height: 1.4;
             margin-top: 7px;
         }
+        .profile-photo-uploader {
+            align-items: center;
+            background: #141414;
+            border: 1px dashed rgba(224, 182, 10, 0.38);
+            border-radius: 14px;
+            display: grid;
+            gap: 14px;
+            grid-template-columns: 92px minmax(0, 1fr);
+            margin-top: 8px;
+            padding: 12px;
+        }
+        .profile-photo-uploader__preview {
+            aspect-ratio: 1;
+            background: #050505;
+            border-radius: 999px;
+            height: 92px;
+            object-fit: cover;
+            width: 92px;
+        }
+        .profile-photo-uploader input[type="file"] {
+            background: #242424;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #eee;
+            width: 100%;
+        }
+        .profile-photo-uploader small {
+            color: #9c9c9c;
+            display: block;
+            line-height: 1.4;
+            margin-top: 7px;
+        }
         .homepage-advanced-json {
             display: none;
         }
@@ -1125,8 +1156,15 @@
                     <input type="text" id="name" name="name">
                 </div>
                 <div class="form-group">
-                    <label for="photo">Photo URL or local path</label>
+                    <label for="photo">Photo upload or image path</label>
                     <input type="text" id="photo" name="photo">
+                    <div class="profile-photo-uploader">
+                        <img id="photo-upload-preview" class="profile-photo-uploader__preview" src="dashboard-athlete-reference.png" alt="Selected child photo preview">
+                        <div>
+                            <input type="file" id="photo-upload" accept="image/*">
+                            <small>Choose a JPG, PNG, or WebP image from your computer. The selected photo is saved with this child profile.</small>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="two-col">
@@ -1896,6 +1934,31 @@
             });
         }
 
+        function optimizeProfilePhoto(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const image = new Image();
+                    image.onload = () => {
+                        const maxSize = 900;
+                        const scale = Math.min(1, maxSize / image.width, maxSize / image.height);
+                        const width = Math.max(1, Math.round(image.width * scale));
+                        const height = Math.max(1, Math.round(image.height * scale));
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const context = canvas.getContext('2d');
+                        context.drawImage(image, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.86));
+                    };
+                    image.onerror = reject;
+                    image.src = reader.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         function createHomepageImageField(field, value, index) {
             const wrapper = document.createElement('div');
             wrapper.className = 'homepage-image-field';
@@ -2449,6 +2512,8 @@
             document.getElementById('preview-name').textContent = name;
             document.getElementById('preview-age').textContent = age ? `${age} years old` : 'Ready to build';
             document.getElementById('preview-photo').src = photo;
+            const uploadPreview = document.getElementById('photo-upload-preview');
+            if (uploadPreview) uploadPreview.src = photo;
             document.getElementById('preview-division').textContent = division;
             document.getElementById('preview-events').textContent = events;
             document.getElementById('preview-belt').textContent = belt;
@@ -2609,6 +2674,8 @@
             document.getElementById('homeProgram').value = safeFieldValue(data.homeProgram);
             document.getElementById('videoLogs').value = (data.videoLogs || []).map(item => `${item.title || ''},${item.url || ''}`).join('\n');
             renderBuilder('video-builder', data.videoLogs || [], addVideoRow);
+            const photoUpload = document.getElementById('photo-upload');
+            if (photoUpload) photoUpload.value = '';
             document.getElementById('tournamentPrep').value = (data.tournamentPrep || []).join('\n');
             renderBuilder('prep-builder', data.tournamentPrep || [], addPrepRow);
             document.getElementById('tournamentResults').value = (data.tournamentResults || []).join('\n');
@@ -3061,6 +3128,23 @@
             });
             document.getElementById('admin-form').addEventListener('input', updateLivePreview);
             document.getElementById('admin-form').addEventListener('change', updateLivePreview);
+
+            const photoUpload = document.getElementById('photo-upload');
+            if (photoUpload) {
+                photoUpload.addEventListener('change', async () => {
+                    const file = photoUpload.files && photoUpload.files[0];
+                    if (!file) return;
+                    try {
+                        const optimizedPhoto = await optimizeProfilePhoto(file);
+                        document.getElementById('photo').value = optimizedPhoto;
+                        updateLivePreview();
+                        scheduleAutosave();
+                        setSaveStatus('Child photo added. Remember to save changes.', false, true);
+                    } catch (error) {
+                        setSaveStatus('This child photo could not be loaded. Please try another image.', true, false);
+                    }
+                });
+            }
 
             document.getElementById('note-template-focus').addEventListener('click', () => {
                 document.getElementById('coachNote').value = 'The athlete is showing strong focus in training and responds well to technical correction. Continue reinforcing consistency, confidence, and clean execution under pressure.';
