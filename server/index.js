@@ -132,6 +132,12 @@ app.post('/api/kv/:key', (req, res) => {
   res.json({ ok: true, key });
 });
 
+const staticRoot = path.join(__dirname, '..');
+app.use(express.static(staticRoot));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(staticRoot, 'index.html'));
+});
+
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
   console.log(`romania-sync-server listening on ${port}`);

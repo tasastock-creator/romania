@@ -404,6 +404,7 @@ function renderFeedback(feedback) {
 
 function renderDashboard(data) {
     setText("child-name", data.name || defaultData.name);
+    setText("portfolio-owner", `Viewing portfolio for ${data.name || defaultData.name}`);
     setText("child-age", data.age ? `${data.age} Years Old` : "");
     setText("athlete-id", data.athleteId || defaultData.athleteId);
     setText("child-belt", data.belt || defaultData.belt);
@@ -423,6 +424,8 @@ function renderDashboard(data) {
     if (note) {
         note.textContent = data.coachNote || defaultData.coachNote;
     }
+
+    document.title = `${data.name || defaultData.name} | LionMode Elite Dashboard`;
 
     const signature = document.querySelector(".dashboard-note-signature");
     if (signature) {
