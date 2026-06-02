@@ -1,7 +1,97 @@
 {
-  "users": null,
-  "dashboards": null,
-  "dojoData": null,
-  "currentUser": null,
-  "testKey": "hello"
+  "users": [
+    {
+      "name": "Admin",
+      "password": "LionMode2026!",
+      "role": "admin"
+    },
+    {
+      "name": "parent1",
+      "password": "parentpass1",
+      "role": "parent",
+      "childName": "Rayna Panday"
+    },
+    {
+      "name": "parent2",
+      "password": "parentpass2",
+      "role": "parent",
+      "childName": "Kiran Singh"
+    },
+    {
+      "name": "athlete",
+      "password": "password123",
+      "role": "athlete",
+      "childName": "Test Athlete"
+    }
+  ],
+  "dashboards": {
+    "Rayna Panday": {
+      "name": "Rayna Panday",
+      "childUsername": "rayna",
+      "childPassword": "rayna123",
+      "parentName": "parent1",
+      "parentPassword": "parentpass1",
+      "belt": "Yellow Belt",
+      "age": 7,
+      "division": "8 & Under",
+      "strengths": [
+        "Strong basics",
+        "Great focus",
+        "Fast learner"
+      ],
+      "weaknesses": [
+        "Kumite aggression",
+        "Footwork",
+        "Endurance"
+      ],
+      "goals": [
+        "Win national gold",
+        "Train for Romania 2026"
+      ]
+    },
+    "Kiran Singh": {
+      "name": "Kiran Singh",
+      "childUsername": "kiran",
+      "childPassword": "kiran123",
+      "parentName": "parent2",
+      "parentPassword": "parentpass2",
+      "belt": "Blue Belt",
+      "age": 9,
+      "division": "U10 Kumite",
+      "strengths": [
+        "Fast footwork",
+        "Strong kicks",
+        "Competitive focus"
+      ],
+      "weaknesses": [
+        "Control on attacks",
+        "Stamina",
+        "Tactical timing"
+      ],
+      "goals": [
+        "Improve scoring",
+        "Strengthen defense"
+      ]
+    },
+    "Test Athlete": {
+      "name": "Test Athlete",
+      "childUsername": "athlete",
+      "childPassword": "password123",
+      "parentName": "parent1",
+      "parentPassword": "parentpass1",
+      "belt": "White Belt",
+      "age": 12,
+      "division": "U12 Male Kumite"
+    }
+  },
+  "dojoData": {
+    "name": "Test Athlete",
+    "childUsername": "athlete",
+    "childPassword": "password123",
+    "parentName": "parent1",
+    "parentPassword": "parentpass1",
+    "belt": "White Belt",
+    "age": 12,
+    "division": "U12 Male Kumite"
+  }
 }

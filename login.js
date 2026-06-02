@@ -343,7 +343,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const usernameInput = document.getElementById('login-username');
     const passwordInput = document.getElementById('login-password');
 
-    function handleLogin() {
+    async function remoteLogin(username, password) {
+        if (!REMOTE_API_BASE) {
+            return null;
+        }
+        try {
+            const response = await fetch(`${REMOTE_API_BASE}/api/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+            if (!response.ok) {
+                return null;
+            }
+            const body = await response.json();
+            return body && body.ok && body.user ? body.user : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    async function handleLogin() {
         const username = document.getElementById('login-username').value.trim();
         const password = document.getElementById('login-password').value;
         const normalizedUsername = username.toLowerCase();
@@ -376,9 +398,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (debugMode && user) console.log('Matched user from profile:', user);
         }
 
-        if (!user && DEFAULT_ADMIN_USER.name.toLowerCase() === normalizedUsername && normalizedPassword === DEFAULT_ADMIN_USER.password) {
-            user = DEFAULT_ADMIN_USER;
-            if (debugMode) console.log('Matched admin user');
+        if (!user) {
+            user = await remoteLogin(username, password);
+            if (debugMode && user) console.log('Matched user from remote login:', user);
         }
 
         if (user) {

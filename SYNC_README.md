@@ -6,6 +6,7 @@ What I added
 
 How it works (minimal)
 - Client now POSTs changes to `/api/kv/:key` and the server stores them in `server/db.json`.
+- The server exposes `/api/login` so parent and child credentials can be authenticated remotely.
 - On page load the client attempts to pull `users`, `dashboards`, and `dojoData` from the server and writes them into `localStorage` so other devices can read the updated state.
 
 Run locally
@@ -27,6 +28,12 @@ npm start
 Client configuration
 - By default the client will contact `http://localhost:4000`. To change this in a browser environment, set `window.REMOTE_API_BASE` before loading scripts (or edit the constant in `login.js`/`dashboard.js`/`landing.js`).
 - If you enable `API_KEY`, also set `window.REMOTE_API_KEY` in the page to allow the client to POST.
+
+Sample login credentials
+- Parent 1: `parent1` / `parentpass1` → child `Rayna Panday`
+- Parent 2: `parent2` / `parentpass2` → child `Kiran Singh`
+- Child login: `athlete` / `password123`
+- Admin: `Admin` / `LionMode2026!`
 
 Files I modified
 - `login.js` — added remote sync pull at startup and POST-on-save inside `setStoredItem`.
