@@ -132,10 +132,20 @@ app.post('/api/kv/:key', (req, res) => {
   res.json({ ok: true, key });
 });
 
-const staticRoot = path.join(__dirname, '..');
-app.use(express.static(staticRoot));
+const staticCandidates = [
+  path.join(__dirname, '..'),
+  path.join(__dirname),
+  process.cwd()
+].map((root) => path.resolve(root));
+for (const root of staticCandidates) {
+  app.use(express.static(root));
+}
+
+const staticRoot = staticCandidates.find((root) => fs.existsSync(path.join(root, 'index.html'))) || staticCandidates[0];
+const indexFile = path.join(staticRoot, 'index.html');
+console.log('Using static root:', staticRoot);
 app.get('*', (req, res) => {
-  res.sendFile(path.join(staticRoot, 'index.html'));
+  res.sendFile(indexFile);
 });
 
 const port = process.env.PORT || 4000;
