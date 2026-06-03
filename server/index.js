@@ -132,18 +132,48 @@ app.post('/api/kv/:key', (req, res) => {
   res.json({ ok: true, key });
 });
 
-const staticCandidates = [
-  path.join(__dirname, '..'),
-  path.join(__dirname),
-  process.cwd()
-].map((root) => path.resolve(root));
-for (const root of staticCandidates) {
+function findStaticRoots() {
+  const roots = new Set();
+  const addRoot = (root) => {
+    if (root) {
+      roots.add(path.resolve(root));
+    }
+  };
+
+  addRoot(__dirname);
+  addRoot(path.join(__dirname, '..'));
+  addRoot(process.cwd());
+
+  let current = path.resolve(process.cwd() || __dirname);
+  while (current && current !== path.dirname(current)) {
+    addRoot(current);
+    current = path.dirname(current);
+  }
+
+  return Array.from(roots);
+}
+
+const staticRoots = findStaticRoots();
+for (const root of staticRoots) {
   app.use(express.static(root));
 }
 
-const staticRoot = staticCandidates.find((root) => fs.existsSync(path.join(root, 'index.html'))) || staticCandidates[0];
+const staticRoot = staticRoots.find((root) => fs.existsSync(path.join(root, 'index.html'))) || staticRoots[0];
 const indexFile = path.join(staticRoot, 'index.html');
 console.log('Using static root:', staticRoot);
+console.log('Static roots:', staticRoots.join(' | '));
+
+app.get('/debug-static', (req, res) => {
+  const entries = staticRoots.map((root) => ({
+    root,
+    indexHtml: fs.existsSync(path.join(root, 'index.html')),
+    homeCss: fs.existsSync(path.join(root, 'home-v8.css')),
+    loginHtml: fs.existsSync(path.join(root, 'login.html')),
+    serverIndex: fs.existsSync(path.join(root, 'server', 'index.js'))
+  }));
+  res.json({ dirname: __dirname, cwd: process.cwd(), entries });
+});
+
 app.get('*', (req, res) => {
   res.sendFile(indexFile);
 });
