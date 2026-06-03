@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const multer = require('multer');
 
 const DB_PATH = path.join(__dirname, 'db.json');
 const API_KEY = process.env.API_KEY || '';
@@ -130,6 +131,72 @@ app.post('/api/kv/:key', (req, res) => {
   db[key] = req.body && Object.prototype.hasOwnProperty.call(req.body, 'value') ? req.body.value : null;
   writeDb(db);
   res.json({ ok: true, key });
+});
+
+// File upload handling - saves to top-level /uploads directory
+const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
+try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch (e) {}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, UPLOAD_DIR);
+  },
+  filename: function (req, file, cb) {
+    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, unique + path.extname(file.originalname).toLowerCase());
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    const allowed = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+    const ext = path.extname(file.originalname || '').toLowerCase();
+    cb(null, allowed.includes(ext));
+  }
+});
+
+app.post('/api/upload', upload.single('file'), (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'no file uploaded' });
+    const db = readDb();
+    const filename = path.posix.join('uploads', req.file.filename);
+
+    // Try to associate with a dashboard profile
+    const profileName = (req.body && (req.body.profileName || req.body.name || req.body.profile)) || null;
+    let updated = false;
+    if (profileName && db.dashboards && typeof db.dashboards === 'object') {
+      // find profile by exact name or by childUsername
+      for (const key of Object.keys(db.dashboards)) {
+        const profile = db.dashboards[key] || {};
+        const names = [String(profile.name || '').trim(), String(profile.childUsername || '').trim(), String(key).trim()];
+        if (names.map(n => n.toLowerCase()).includes(String(profileName).trim().toLowerCase())) {
+          db.dashboards[key] = Object.assign({}, profile, { photo: filename });
+          updated = true;
+          break;
+        }
+      }
+    }
+
+    // If not updated, set dojoData fallback
+    if (!updated && db.dojoData && typeof db.dojoData === 'object') {
+      db.dojoData.photo = filename;
+      updated = true;
+    }
+
+    // If still not updated, attach to a default dashboard entry
+    if (!updated) {
+      const defaultKey = req.body.profileKey || 'Uploaded Profile';
+      db.dashboards = db.dashboards || {};
+      db.dashboards[defaultKey] = db.dashboards[defaultKey] || {};
+      db.dashboards[defaultKey].photo = filename;
+    }
+
+    writeDb(db);
+    res.json({ ok: true, filename });
+  } catch (e) {
+    res.status(500).json({ error: 'upload failed' });
+  }
 });
 
 function findStaticRoots() {

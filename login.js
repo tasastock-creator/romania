@@ -6,6 +6,54 @@ document.addEventListener('DOMContentLoaded', () => {
         role: 'admin'
     };
     const SHARED_STATE_MARKER = '__lionModeEliteSharedState';
+    
+    // Check for existing session and show logout option
+    const checkExistingSession = () => {
+        try {
+            let currentUser = null;
+            const stores = [];
+            try { if (window.localStorage) stores.push(window.localStorage); } catch (e) {}
+            try { if (window.sessionStorage) stores.push(window.sessionStorage); } catch (e) {}
+            
+            for (const store of stores) {
+                try {
+                    const raw = store.getItem('currentUser');
+                    if (raw) {
+                        currentUser = JSON.parse(raw);
+                        if (currentUser && currentUser.name) break;
+                    }
+                } catch (e) {}
+            }
+            
+            const sessionBanner = document.getElementById('session-banner');
+            const logoutBtn = document.getElementById('logout-btn');
+            const currentUserDisplay = document.getElementById('current-user-display');
+            
+            if (currentUser && currentUser.name && sessionBanner) {
+                currentUserDisplay.textContent = currentUser.name;
+                sessionBanner.classList.remove('hidden');
+                
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', () => {
+                        // Clear all storage
+                        const stores = [];
+                        try { if (window.localStorage) stores.push(window.localStorage); } catch (e) {}
+                        try { if (window.sessionStorage) stores.push(window.sessionStorage); } catch (e) {}
+                        stores.forEach(store => {
+                            try { store.removeItem('currentUser'); } catch (e) {}
+                        });
+                        
+                        // Reload page to refresh the session banner
+                        window.location.reload();
+                    });
+                }
+            }
+        } catch (e) {
+            // Silently fail
+        }
+    };
+    
+    checkExistingSession();
 
     function getWindowNameState() {
         try {

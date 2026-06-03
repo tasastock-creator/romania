@@ -6,9 +6,54 @@
     <title>Login – LionMode Elite</title>
     <link rel="stylesheet" href="style.css?v=4">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .session-banner {
+            background: #1a3a1a;
+            border-bottom: 2px solid #e0b60a;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        .session-banner.hidden {
+            display: none;
+        }
+        .session-info {
+            color: #fff;
+            font-size: 14px;
+        }
+        .session-info strong {
+            color: #e0b60a;
+        }
+        .logout-btn {
+            background: #e0b60a;
+            border: none;
+            color: #070707;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .logout-btn:hover {
+            background: #f2cb05;
+        }
+    </style>
 </head>
 <body>
     <div class="login-page">
+        <!-- Session banner for logged-in users -->
+        <div class="session-banner hidden" id="session-banner">
+            <div class="session-info">
+                Logged in as <strong id="current-user-display"></strong>
+            </div>
+            <button class="logout-btn" id="logout-btn">Logout</button>
+        </div>
+        
         <!-- Hero background for visual appeal -->
         <section class="login-hero">
             <div class="login-overlay">

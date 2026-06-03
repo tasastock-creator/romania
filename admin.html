@@ -2501,7 +2501,11 @@
 
         function updateLivePreview() {
             const name = document.getElementById('name').value.trim() || 'New Athlete';
-            const photo = normalizePhotoPath(document.getElementById('photo').value.trim());
+            let photo = normalizePhotoPath(document.getElementById('photo').value.trim());
+            // If the photo value is a server upload path like "uploads/..", ensure it is absolute for preview
+            if (photo && photo.indexOf('uploads/') === 0 && !photo.startsWith('/')) {
+                photo = '/' + photo;
+            }
             const age = document.getElementById('age').value.trim();
             const division = document.getElementById('division').value.trim() || 'Not set';
             const events = document.getElementById('eventType').value.trim() || 'Not set';
@@ -3135,13 +3139,40 @@
                     const file = photoUpload.files && photoUpload.files[0];
                     if (!file) return;
                     try {
-                        const optimizedPhoto = await optimizeProfilePhoto(file);
-                        document.getElementById('photo').value = optimizedPhoto;
+                        const optimizedDataUrl = await optimizeProfilePhoto(file);
+
+                        // Convert data URL to Blob
+                        function dataURLtoBlob(dataurl) {
+                            const parts = dataurl.split(',');
+                            const mimeMatch = parts[0].match(/:(.*?);/);
+                            const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+                            const binary = atob(parts[1]);
+                            let len = binary.length;
+                            const u8 = new Uint8Array(len);
+                            while (len--) u8[len] = binary.charCodeAt(len);
+                            return new Blob([u8], { type: mime });
+                        }
+
+                        const blob = dataURLtoBlob(optimizedDataUrl);
+                        const formData = new FormData();
+                        formData.append('file', blob, file.name || 'photo.jpg');
+                        const profileName = document.getElementById('name').value.trim();
+                        if (profileName) formData.append('profileName', profileName);
+
+                        const resp = await fetch('/api/upload', { method: 'POST', body: formData });
+                        if (!resp.ok) throw new Error('upload failed');
+                        const result = await resp.json();
+                        if (!result || !result.ok || !result.filename) throw new Error('invalid upload response');
+
+                        // Save returned filename into the photo field and update preview
+                        document.getElementById('photo').value = result.filename;
+                        const preview = document.getElementById('photo-upload-preview');
+                        if (preview) preview.src = '/' + result.filename;
                         updateLivePreview();
                         scheduleAutosave();
-                        setSaveStatus('Child photo added. Remember to save changes.', false, true);
+                        setSaveStatus('Child photo uploaded. Remember to save changes.', false, true);
                     } catch (error) {
-                        setSaveStatus('This child photo could not be loaded. Please try another image.', true, false);
+                        setSaveStatus('This child photo could not be uploaded. Please try another image.', true, false);
                     }
                 });
             }

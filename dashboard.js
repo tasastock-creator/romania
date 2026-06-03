@@ -470,6 +470,22 @@ function initDashboard() {
     const dashboardData = getDashboardForUser(currentUser);
     renderDashboard({ ...defaultData, ...dashboardData });
     initSidebarNavigation();
+    
+    // Add logout button functionality
+    const logoutBtn = document.getElementById('dashboard-logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            // Clear currentUser from all storage
+            const stores = [];
+            try { if (window.localStorage) stores.push(window.localStorage); } catch (e) {}
+            try { if (window.sessionStorage) stores.push(window.sessionStorage); } catch (e) {}
+            stores.forEach(store => {
+                try { store.removeItem('currentUser'); } catch (e) {}
+            });
+            // Redirect to login page
+            window.location.href = 'login.html';
+        });
+    }
 }
 
 initDashboard();
