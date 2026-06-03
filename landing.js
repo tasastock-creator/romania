@@ -419,18 +419,26 @@ function setupLogin() {
             || getProfileLoginUser(username, password);
 
         if (user) {
-            localStorage.setItem('currentUser', username);
+            // Persist a structured currentUser (JSON) so other pages can parse role
+            const userObj = (typeof user === 'object' && user.name) ? { name: user.name, role: user.role || '' } : { name: username, role: '' };
+            localStorage.setItem('currentUser', JSON.stringify(userObj));
             // Notify remote sync server about currentUser (best-effort)
             (async function() {
                 try {
                     await fetch(`${REMOTE_API_BASE}/api/kv/${encodeURIComponent('currentUser')}`, {
                         method: 'POST',
                         headers: Object.assign({ 'Content-Type': 'application/json' }, REMOTE_API_KEY ? { 'x-api-key': REMOTE_API_KEY } : {}),
-                        body: JSON.stringify({ value: username })
+                        body: JSON.stringify({ value: userObj })
                     });
                 } catch (e) {}
             })();
-            window.location.href = 'index.html';
+            // Redirect based on role
+            const role = (userObj.role || '').toLowerCase();
+            if (role === 'admin' || role === 'coach') {
+                window.location.href = 'admin.html';
+            } else {
+                window.location.href = 'dashboard.html';
+            }
         } else {
             errorEl.textContent = 'Invalid name or password';
         }
