@@ -456,9 +456,16 @@ document.addEventListener('DOMContentLoaded', () => {
             setStoredItem('currentUser', JSON.stringify(user));
             // redirect based on role
             const role = (user.role || '').toLowerCase();
-            if (role === 'coach' || role === 'admin' || user.name === 'Admin') {
+            const userName = (user.name || '').trim();
+            const isAdmin = role === 'admin' || role === 'coach' || userName === 'Admin';
+            
+            console.log('Login successful:', { userName, role, isAdmin });
+            
+            if (isAdmin) {
+                console.log('Redirecting to admin.html');
                 window.location.href = 'admin.html';
             } else {
+                console.log('Redirecting to dashboard.html');
                 window.location.href = 'dashboard.html';
             }
         } else {

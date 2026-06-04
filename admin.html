@@ -1667,10 +1667,16 @@
         function requireAdminAccess() {
             const currentUser = safeJsonParse(getStoredItem('currentUser'), null);
             const role = currentUser && currentUser.role ? currentUser.role.toLowerCase() : '';
+            const userName = currentUser && currentUser.name ? currentUser.name : '';
+            
+            console.log('Admin access check:', { currentUser, role, userName });
+            
             if (role !== 'admin' && role !== 'coach' && !(currentUser && currentUser.name === 'Admin')) {
+                console.log('Admin access denied, redirecting to login.html');
                 window.location.href = 'login.html';
                 return null;
             }
+            console.log('Admin access granted');
             return currentUser;
         }
 
