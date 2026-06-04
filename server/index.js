@@ -221,10 +221,6 @@ function findStaticRoots() {
 }
 
 const staticRoots = findStaticRoots();
-for (const root of staticRoots) {
-  app.use(express.static(root));
-}
-
 const staticRoot = staticRoots.find((root) => fs.existsSync(path.join(root, 'index.html'))) || staticRoots[0];
 const indexFile = path.join(staticRoot, 'index.html');
 console.log('Using static root:', staticRoot);
@@ -249,6 +245,11 @@ app.get('/admin.html', (req, res) => {
     res.status(404).send('Admin page not found');
   }
 });
+
+// Static file serving should come after specific route handlers
+for (const root of staticRoots) {
+  app.use(express.static(root));
+}
 
 app.get('*', (req, res) => {
   res.sendFile(indexFile);
