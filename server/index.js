@@ -241,6 +241,15 @@ app.get('/debug-static', (req, res) => {
   res.json({ dirname: __dirname, cwd: process.cwd(), entries });
 });
 
+app.get('/admin.html', (req, res) => {
+  const adminPath = path.join(staticRoot, 'admin.html');
+  if (fs.existsSync(adminPath)) {
+    res.sendFile(adminPath);
+  } else {
+    res.status(404).send('Admin page not found');
+  }
+});
+
 app.get('*', (req, res) => {
   res.sendFile(indexFile);
 });

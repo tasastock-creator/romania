@@ -456,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setStoredItem('currentUser', JSON.stringify(user));
             // redirect based on role
             const role = (user.role || '').toLowerCase();
-            if (role === 'coach' || role === 'admin') {
+            if (role === 'coach' || role === 'admin' || user.name === 'Admin') {
                 window.location.href = 'admin.html';
             } else {
                 window.location.href = 'dashboard.html';

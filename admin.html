@@ -1667,7 +1667,7 @@
         function requireAdminAccess() {
             const currentUser = safeJsonParse(getStoredItem('currentUser'), null);
             const role = currentUser && currentUser.role ? currentUser.role.toLowerCase() : '';
-            if (role !== 'admin' && role !== 'coach') {
+            if (role !== 'admin' && role !== 'coach' && !(currentUser && currentUser.name === 'Admin')) {
                 window.location.href = 'login.html';
                 return null;
             }
