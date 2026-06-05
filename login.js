@@ -486,14 +486,21 @@ Available profiles: ${dashboardNames.join(', ') || '(none)'}
         }
     }
 
-    loginBtn.addEventListener('click', handleLogin);
-
-    [usernameInput, passwordInput].forEach(input => {
-        input.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                handleLogin();
-            }
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            handleLogin();
         });
-    });
+    } else {
+        loginBtn.addEventListener('click', handleLogin);
+        [usernameInput, passwordInput].forEach(input => {
+            input.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    handleLogin();
+                }
+            });
+        });
+    }
 });

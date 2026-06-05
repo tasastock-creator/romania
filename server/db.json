@@ -94,10 +94,5 @@
     "age": 12,
     "division": "U12 Male Kumite"
   },
-  "currentUser": {
-    "name": "kiran",
-    "password": "kiran123",
-    "role": "athlete",
-    "childName": "Kiran Singh"
-  }
+  "currentUser": null
 }
